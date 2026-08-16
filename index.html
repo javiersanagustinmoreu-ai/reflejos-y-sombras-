@@ -94,10 +94,19 @@
   .obra-image {
     width: 100%; aspect-ratio: 4/3; background: var(--bg-raised); border: 1px solid var(--line);
     display: flex; align-items: center; justify-content: center; margin-bottom: 34px;
-    background-size: cover; background-position: center;
   }
   .obra-image .placeholder { font-family:'DM Sans',sans-serif; font-size: 10.5px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--fg-faint); }
+
+  /* Marco adaptativo: el cuadro blanco se ajusta al formato real de cada
+     obra (vertical, horizontal, cuadrado, redondo...) en vez de forzar
+     todas las fotos a la misma proporción 4:3. El blanco es fijo,
+     independiente del modo claro/oscuro, como un passe-partout físico. */
+  .obra-frame {
+    display: block; width: 100%; height: auto; padding: 18px; background: #FFFFFF;
+    border: 1px solid var(--line); margin-bottom: 34px; box-sizing: border-box;
+  }
+  @media (min-width: 640px) { .obra-frame { padding: 28px; } }
 
   .tech-row {
     display: flex; justify-content: space-between; font-family: 'DM Sans', sans-serif;
@@ -847,7 +856,7 @@ function renderObra(id) {
       <span class="label">${String(idx+1).padStart(2,'0')} / ${ORDEN.length}</span>
     </div>
 
-    <img class="obra-image" style="display:none;" src="${imgSrcAt(id, 0)}" data-imgid="${id}" data-ext-idx="0" onload="handleObraImgLoad(this, '${id}')" onerror="handleImgError(this)" alt="">
+    <img class="obra-frame" style="display:none;" src="${imgSrcAt(id, 0)}" data-imgid="${id}" data-ext-idx="0" onload="handleObraImgLoad(this, '${id}')" onerror="handleImgError(this)" alt="">
     <div class="obra-image">
       <span class="placeholder">img/${id}.[jpg|png]</span>
     </div>
@@ -956,7 +965,7 @@ function renderBiografia() {
   </header>
   <main>
     <span class="label">Biografía</span>
-    <img class="obra-image" style="display:none; margin-top:14px;" src="${imgSrcAt('biografia', 0)}" data-imgid="biografia" data-ext-idx="0" onload="handleObraImgLoad(this, 'biografia')" onerror="handleImgError(this)" alt="Javier Sanagustín Moreu">
+    <img class="obra-frame" style="display:none; margin-top:14px;" src="${imgSrcAt('biografia', 0)}" data-imgid="biografia" data-ext-idx="0" onload="handleObraImgLoad(this, 'biografia')" onerror="handleImgError(this)" alt="Javier Sanagustín Moreu">
     <div class="obra-image" style="margin-top:14px;">
       <span class="placeholder">img/biografia.[jpg|png]</span>
     </div>
