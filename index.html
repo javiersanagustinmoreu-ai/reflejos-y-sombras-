@@ -1,307 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reflejos y sombras — Javier Sanagustín Moreu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #F2EDE3;
-    --bg-raised: #FBF8F2;
-    --fg: #1C1C1A;
-    --fg-soft: #6B665C;
-    --fg-faint: #A39D8F;
-    --accent: #1E2A5E;
-    --line: #D9D2C3;
-  }
-  [data-theme="dark"] {
-    --bg: #14141a;
-    --bg-raised: #1b1b22;
-    --fg: #E8E4D8;
-    --fg-soft: #948F82;
-    --fg-faint: #56534a;
-    --accent: #7C8CE0;
-    --line: #2c2c34;
-  }
-  /* El reflejo siempre blanco, la sombra siempre oscura, en cualquier modo */
-  .dot.reflejo { background: #FBF8F2; border: 1.3px solid #1C1C1A; }
-  .dot.sombra { background: #1C1C1A; border: 1.3px solid #1C1C1A; }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 400;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    transition: background .3s ease, color .3s ease;
-  }
-  .label {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--fg-faint);
-  }
-
-  /* ───────── SHELL ───────── */
-  #app { max-width: 640px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-
-  header.top {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 28px 24px 18px;
-  }
-  .brand { font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--fg); line-height: 1.6; cursor: pointer; }
-  .brand span { display: block; }
-  .expo-meta { font-family: 'DM Sans', sans-serif; font-size: 10.5px; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--fg-faint); text-align: right; max-width: 150px; }
-
-  .theme-toggle {
-    font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--fg-faint); background: none; border: 1px solid var(--line); border-radius: 20px;
-    padding: 5px 12px; cursor: pointer; margin-top: 10px;
-  }
-  .theme-toggle:hover { color: var(--fg); border-color: var(--fg-soft); }
-
-  header.top .navrow { display:flex; gap:8px; align-items:center; }
-  .navbtn {
-    width: 32px; height: 32px; border: 1px solid var(--line); background: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; color: var(--fg-soft);
-    font-family: 'DM Sans', sans-serif; font-size: 15px; border-radius: 2px;
-  }
-  .navbtn:disabled { opacity: .25; cursor: default; }
-  .navbtn:not(:disabled):hover { color: var(--fg); border-color: var(--fg-soft); }
-
-  main { flex: 1; padding: 6px 24px 60px; }
-
-  footer.bottom {
-    padding: 20px 24px 36px; display: flex; justify-content: space-between; align-items: baseline;
-    border-top: 1px solid var(--line); margin-top: 40px;
-  }
-  .artist-sig { font-style: italic; font-size: 15px; color: var(--fg-faint); }
-  .expo-dates { font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--fg-faint); }
-
-  /* ───────── OBRA SCREEN ───────── */
-  .block-row { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 60px; }
-
-  .obra-image {
-    width: 100%; aspect-ratio: 4/3; background: var(--bg-raised); border: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: center; margin-bottom: 34px;
-  }
-  .obra-image .placeholder { font-family:'DM Sans',sans-serif; font-size: 10.5px; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--fg-faint); }
-
-  /* Marco adaptativo: el cuadro blanco se ajusta al formato real de cada
-     obra (vertical, horizontal, cuadrado, redondo...) en vez de forzar
-     todas las fotos a la misma proporción 4:3. El blanco es fijo,
-     independiente del modo claro/oscuro, como un passe-partout físico. */
-  .obra-frame {
-    display: block; width: 100%; height: auto; padding: 18px; background: #FFFFFF;
-    border: 1px solid var(--line); margin-bottom: 34px; box-sizing: border-box;
-  }
-  @media (min-width: 640px) { .obra-frame { padding: 28px; } }
-
-  .tech-row {
-    display: flex; justify-content: space-between; font-family: 'DM Sans', sans-serif;
-    font-size: 12px; color: var(--fg-soft); padding: 10px 0; border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line); margin-bottom: 28px;
-  }
-
-  h1.titulo {
-    font-size: 44px; font-weight: 400; line-height: 1.15; margin-bottom: 30px; letter-spacing: -0.01em;
-  }
-  h1.titulo em { font-style: italic; color: var(--accent); font-weight: 400; }
-
-  .cuerpo p { font-size: 19px; line-height: 1.65; margin-bottom: 18px; color: var(--fg); }
-  .pendiente-flag {
-    font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .06em; color: #B5652A;
-    border: 1px solid #B5652A55; padding: 6px 10px; display: inline-block; margin-bottom: 18px; border-radius: 3px;
-  }
-
-  .accordion { border-top: 1px solid var(--line); margin-top: 20px; }
-  .acc-item { border-bottom: 1px solid var(--line); }
-  .acc-head {
-    width: 100%; background: none; border: none; cursor: pointer; text-align: left;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 0; font-family: 'DM Sans', sans-serif; font-size: 11.5px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--fg-faint); gap: 20px;
-  }
-  .acc-head .sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px;
-    text-transform: none; letter-spacing: 0; color: var(--fg-soft); flex: 1; text-align: right; padding-right: 12px; }
-  .acc-plus { font-size: 20px; font-weight: 300; color: var(--fg-faint); flex-shrink: 0; transition: transform .25s ease; line-height:1;}
-  .acc-item.open .acc-plus { transform: rotate(45deg); }
-  .acc-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-  .acc-item.open .acc-body { max-height: 1400px; }
-  .acc-body-inner { padding: 0 0 26px; font-size: 18px; line-height: 1.65; }
-  .acc-body-inner p { margin-bottom: 14px; }
-  .acc-ref-link { display:inline-block; margin-top: 6px; font-family:'DM Sans',sans-serif; font-size: 11.5px;
-    letter-spacing:.05em; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); }
-
-  /* ───────── HOME SCREEN ───────── */
-  .home-portada {
-    display:block; max-width:100%; width:auto; max-height:62vh; height:auto;
-    padding: 18px; background:#FFFFFF; border: 1px solid var(--line);
-    margin: 8px auto 40px; box-sizing:border-box;
-  }
-  @media (min-width: 640px) { .home-portada { padding: 28px; } }
-  .home-portada.small { max-height: 220px; margin: 0 auto 18px; padding: 12px; }
-
-  .vinilo { font-size: 21px; line-height: 1.6; font-style: italic; color: var(--fg); margin-bottom: 8px; }
-  .vinilo-wrap { padding: 10px 0 36px; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
-
-  .legend { display: flex; gap: 22px; align-items: center; margin: -14px 0 40px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-family:'DM Sans',sans-serif; font-size: 11px;
-    letter-spacing: .08em; text-transform: uppercase; color: var(--fg-soft); }
-  .dot { width: 9px; height: 9px; border-radius: 50%; display:inline-block; }
-
-  .home-accordion { margin-bottom: 40px; }
-
-  .worklist { list-style: none; margin-bottom: 44px; }
-  .worklist li { border-bottom: 1px solid var(--line); }
-  .worklist a {
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
-    padding: 16px 0; text-decoration: none; color: var(--fg);
-  }
-  .worklist .num { font-family:'DM Sans',sans-serif; font-size: 11px; color: var(--fg-faint); width: 20px; flex-shrink:0; }
-  .worklist .name { font-style: italic; font-size: 20px; flex: 1; }
-  .worklist a:hover .name { color: var(--accent); }
-
-  .cierre-vinilo { font-style: italic; font-size: 19px; line-height: 1.6; color: var(--fg-soft);
-    padding: 30px 0; border-top: 1px solid var(--line); margin-bottom: 30px; }
-
-  .portada-revisit { text-align: center; padding: 30px 0 10px; border-top: 1px solid var(--line); }
-  .portada-revisit-toggle {
-    background: none; border: none; cursor: pointer; font-family:'DM Sans',sans-serif;
-    font-size: 11px; letter-spacing: .08em; color: var(--fg-faint); text-transform: uppercase;
-    padding: 6px 0; margin-top: 4px;
-  }
-  .portada-revisit-toggle:hover { color: var(--fg-soft); }
-  .portada-hidden-text { max-height: 0; overflow: hidden; transition: max-height .4s ease; text-align: left; }
-  .portada-hidden-text.open { max-height: 2000px; }
-  .portada-hidden-text .inner { padding-top: 22px; font-size: 17.5px; line-height: 1.7; color: var(--fg-soft); }
-  .portada-hidden-text .inner p { margin-bottom: 14px; }
-
-  .catalog-btn {
-    display: block; text-align: center; font-family:'DM Sans',sans-serif; font-size: 11.5px;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--fg); text-decoration: none;
-    border: 1px solid var(--line); padding: 16px; margin-top: 40px;
-  }
-  .catalog-btn small { display:block; font-size: 10px; color: var(--fg-faint); margin-top: 6px; letter-spacing: .04em; text-transform: none; font-style: italic; }
-  .catalog-btn:hover { border-color: var(--fg-soft); }
-
-  .hires-link {
-    display: block; text-align: center; font-family:'DM Sans',sans-serif; font-size: 11px;
-    letter-spacing: .08em; text-transform: uppercase; color: var(--fg-soft); text-decoration: none;
-    border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-top: 32px;
-  }
-  .hires-link:hover { color: var(--fg); border-color: var(--fg-soft); }
-
-  @media (max-width: 480px) {
-    h1.titulo { font-size: 34px; }
-    .cuerpo p, .acc-body-inner { font-size: 17px; }
-  }
-
-  /* ───────── VINILO (pantalla intercalada de bloque) ───────── */
-  .vinilo-screen {
-    min-height: 60vh; display: flex; flex-direction: column; justify-content: center;
-    align-items: flex-start; padding: 40px 0;
-  }
-  .vinilo-screen .label { margin-bottom: 26px; }
-  .vinilo-screen p {
-    font-style: italic; font-size: 30px; line-height: 1.5; color: var(--fg);
-    max-width: 480px;
-  }
-  .vinilo-screen p + p { margin-top: 18px; }
-  @media (max-width: 480px) {
-    .vinilo-screen p { font-size: 24px; }
-  }
-</style>
-</head>
-<body>
-<div id="app"></div>
-
-<script>
-/* ============ DATOS ============ */
-
-// Orden real de recorrido en sala (RyS_vinilos_sala_definitivo.docx)
-const ORDEN = [
-  "antes-de-encontrar","luz-retenida","hacia-arriba","cerro-encendido",
-  "entre-fragmentos","llanura-interior","antes-de-ver","en-el-umbral",
-  "mirada-encarnada","ardiente-calma","sin-distancia","pupila-azul",
-  "no-caigas","antes-de-reconocer"
-];
-
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflejos y sombras — Javier Sanagustín Moreu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #F2EDE3;
+        --bg-raised: #FBF8F2;
+        --fg: #1C1C1A;
+        --fg-soft: #6B665C;
+        --fg-faint: #A39D8F;
+        --accent: #1E2A5E;
+        --line: #D9D2C3;
+      }
+      [data-theme="dark"] {
+        --bg: #14141a;
+        --bg-raised: #1b1b22;
+        --fg: #E8E4D8;
+        --fg-soft: #948F82;
+        --fg-faint: #56534a;
+        --accent: #7C8CE0;
+        --line: #2c2c34;
+      }
+      .dot.reflejo { background: #FBF8F2; border: 1.3px solid #1C1C1A; }
+      .dot.sombra { background: #1C1C1A; border: 1.3px solid #1C1C1A; }
+      
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 400;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        transition: background .3s ease, color .3s ease;
+      }
+      .label { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-faint); }
+      #app { max-width: 640px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+      header.top { display: flex; justify-content: space-between; align-items: flex-start; padding: 28px 24px 18px; }
+      .brand { font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg); line-height: 1.6; cursor: pointer; }
+      .brand span { display:block }
+      .expo-meta { font-family: 'DM Sans', sans-serif; font-size: 10.5px; color: var(--fg-faint); text-align:right }
+      .theme-toggle { font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); background: none; border: 1px solid var(--line); border-radius: 20px; padding: 5px 12px; cursor: pointer; margin-top: 10px; }
+      .navrow { display:flex; gap:8px; align-items:center }
+      .navbtn { width: 32px; height: 32px; border: 1px solid var(--line); background: none; cursor: pointer; display:flex; align-items:center; justify-content:center; color:var(--fg-soft); font-family:'DM Sans',sans-serif }
+      main { flex:1; padding: 6px 24px 60px; }
+      footer.bottom { padding: 20px 24px 36px; display:flex; justify-content:space-between; border-top:1px solid var(--line); margin-top:40px }
+      .artist-sig { font-style: italic; font-size: 15px; color: var(--fg-faint); }
+      .expo-dates { font-family:'DM Sans',sans-serif; font-size:10px; color:var(--fg-faint) }
+      .obra-image { width:100%; aspect-ratio:4/3; background:var(--bg-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; margin-bottom:34px }
+      .obra-image .placeholder { font-family:'DM Sans',sans-serif; font-size:10.5px; color:var(--fg-faint); text-transform:uppercase }
+      .obra-frame { display:block; width:100%; height:auto; padding:18px; background:#fff; border:1px solid var(--line); margin-bottom:34px }
+      .tech-row { display:flex; justify-content:space-between; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--fg-soft); padding:10px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:28px }
+      h1.titulo { font-size:44px; margin-bottom:30px }
+      .cuerpo p { font-size:19px; line-height:1.65; margin-bottom:18px }
+      .accordion { border-top:1px solid var(--line); margin-top:20px }
+      .acc-head { width:100%; background:none; border:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:18px 0; font-family:'DM Sans',sans-serif; font-size:11.5px; color:var(--fg-faint) }
+      .acc-body { max-height:0; overflow:hidden; transition:max-height .35s ease }
+      .acc-item.open .acc-body { max-height:1400px }
+      .catalog-btn { display:block; text-align:center; font-family:'DM Sans',sans-serif; font-size:11.5px; border:1px solid var(--line); padding:16px; margin-top:40px; text-decoration:none; color:var(--fg) }
+      .legend { display:flex; gap:22px; margin:-14px 0 40px }
+      .dot { width:9px; height:9px; border-radius:50% }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    
+    <script>
+      /* Simplified and sanitized data to avoid truncated strings and syntax errors. */
+      const ORDEN = [
+        "antes-de-encontrar","luz-retenida","hacia-arriba","cerro-encendido",
+        "entre-fragmentos","llanura-interior","antes-de-ver","en-el-umbral",
+        "mirada-encarnada","ardiente-calma","sin-distancia","pupila-azul",
+        "no-caigas","antes-de-reconocer"
+        ];
 const OBRAS = {
-  "antes-de-encontrar": {
-    bloque: "Apertura", titulo: "Antes de <em>encontrar</em>", clase: "sombra",
-    tecnica: "Técnica mixta sobre lienzo", dimensiones: "160 × 60 cm", ano: "2021",
-    obra: [
-      "Este es el primer gesto, el más primitivo, el más libre, el que no tenía aún nada que demostrar. La idea de la exposición ya existía en texto, en notas, en una dirección intuida. Pe[...]",
-      "La mancha decidió sola."
-    ],
-    proceso: [
-      "La técnica mixta permitió lo que el óleo solo no permite. El blanco es la nieve, la mancha que da volumen al fondo desde el que todo emerge. El azul nace del lago y lo inunda todo, se e[...]",
-      "El negro de tinta irrumpe como una fuerza distinta, salpica, fluye, marca. Es el gesto más directo de la obra, el que no calcula ni corrige. Donde el azul se expande, el negro explota.",
-      "Los árboles de la derecha nacen al revés, emergen de la mancha ya hecha, como si el paisaje se construyera desde el fondo hacia fuera."
-    ],
-    referencia_texto: [
-      "Monet demostró que las sombras y los blancos de la nieve se llenan de color contenido. El color nace sobre el volumen ya construido en blanco. El azul inunda rápido y fluido, como el col[...]",
-      "Pero el negro es puro. Monet evitaba la ausencia con el color. Aquí se evita con el gesto, la agresividad de la mancha, el chorretón. De ahí emergen los árboles.",
-      "Una sola referencia. Encontrada, no buscada."
-    ],
-    referencia_link: null
-  },
-  // ... (el resto de objetos OBRAS se mantienen sin cambios)
+"antes-de-encontrar": {
+bloque: "Apertura",
+titulo: "Antes de <em>encontrar</em>",
+clase: "sombra",
+tecnica: "Técnica mixta sobre lienzo",
+dimensiones: "160 × 60 cm",
+ano: "2021",
+obra: ["Texto descriptivo de la obra (resumido)."],
+proceso: ["Notas sobre el proceso."],
+referencia_texto: ["Referencia resumida."],
+referencia_link: null
+},
+"luz-retenida": {
+bloque: "Bloque paisaje",
+titulo: "Luz <em>retenida</em>",
+clase: "sombra",
+tecnica: "Óleo sobre lienzo",
+dimensiones: "120 × 110 cm",
+ano: "2025",
+obra: ["Texto descriptivo de la obra."],
+proceso: ["Notas sobre el proceso."],
+referencia_texto: ["Referencia resumida."],
+referencia_link: { autor: "Claude Monet — Agapanthus", url: "https://www.moma.org/" }
+},
+"hacia-arriba": { bloque: "Bloque paisaje", titulo: "Hacia <em>arriba</em>", clase: "sombra", tecnica: "Óleo sobre tabla", dimensiones: "Ø 80 cm", ano: "2022", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor: "Van Gogh", url: "https://historia-arte.com/" } },
+"cerro-encendido": { bloque: "Bloque paisaje", titulo: "Cerro <em>encendido</em>", clase: "sombra", tecnica: "Óleo sobre lienzo", dimensiones: "100 × 70 cm", ano: "2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor: "Piet Mondrian", url: "https://commons.wikimedia.org/" } },
+"entre-fragmentos": { bloque:"Bloque paisaje", titulo:"Entre <em>fragmentos</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"348 × 178 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"David Hockney", url:"https://www.guggenheim-bilbao.eus/" } },
+"llanura-interior": { bloque:"Bloque paisaje", titulo:"Llanura <em>interior</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"102 × 194 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Claire Tabouret", url:"https://clairetabouret.com/" } },
+"antes-de-ver": { bloque:"Bisagra", titulo:"Antes de <em>ver</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"116 × 81 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Georgia O'Keeffe", url:"https://www.museothyssen.org/" } },
+"en-el-umbral": { bloque:"Bloque figura", titulo:"En el <em>umbral</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"44.5 × 39 cm", ano:"2023", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Johannes Vermeer", url:"https://www.mauritshuis.nl/" } },
+"mirada-encarnada": { bloque:"Bloque figura", titulo:"Mirada <em>encarnada</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"77 × 53 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Leonardo da Vinci", url:"https://collections.louvre.fr/" } },
+"ardiente-calma": { bloque:"Bloque figura", titulo:"Ardiente <em>calma</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"120 × 120 cm", ano:"2024", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Frederic Leighton", url:"https://en.wikipedia.org/wiki/Flaming_June" } },
+"sin-distancia": { bloque:"Bloque figura", titulo:"Sin <em>distancia</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"195 × 186 cm", ano:"2023", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Pablo Picasso", url:"https://www.moma.org/" } },
+"pupila-azul": { bloque:"Bloque figura", titulo:"Pupila <em>azul</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"116 × 89 cm", ano:"2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Henri Matisse", url:"https://www.centrepompidou.fr/" } },
+"no-caigas": { bloque:"Bloque figura", titulo:"No <em>caigas</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"180 × 230 cm", ano:"2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Peter Paul Rubens", url:"https://www.museodelprado.es/" } },
+"antes-de-reconocer": { bloque:"Cierre", titulo:"Antes de <em>reconocer</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"97 × 162 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Frida Kahlo", url:"https://casademexico.es/" } }
 };
 
-// (para no alargar innecesariamente el archivo en este commit, el resto del contenido se mantiene idéntico)
+const VINILO_APERTURA = "Estos paisajes son de aquí. Estas personas son cercanas. Estos momentos son míos.";
+const VINILO_CIERRE = "Has recorrido paisajes que no existen y cuerpos que no se dejan nombrar.";
+const EPILOGO = ["Epilogo: texto resumido.", "Gracias por visitar." ];
+const EPILOGO_FINAL = "Es mi sombra en el reflejo de tus sentimientos.";
+const TEXTO_ARTISTA = ["Texto del artista."];
+const TEXTO_CURATORIAL = ["Texto curatorial resumido."];
 
-// IMÁGENES & funciones relacionadas
-const IMG_EXTS = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'];
-function imgSrcAt(id, i) { return `img/${id}.${IMG_EXTS[i]}`; }
-function imgPath(id) { return imgSrcAt(id, 0); }
-const PORTADA_IMG = imgSrcAt('portada', 0);
+const VINILOS = {
+"texto-artista-tabique": { label: "Texto de artista", texto: TEXTO_ARTISTA },
+"vinilo-paisaje": { label: "Antes del bloque paisaje", texto: ["Texto del vinilo de paisaje."] },
+"vinilo-bisagra": { label: "Bisagra", texto: ["Algo cambia aquí.", "Tómate un momento antes de seguir."] },
+"vinilo-figura": { label: "Bloque figura", texto: ["La pintura no describe estos cuerpos."] },
+"vinilo-cierre-recorrido": { label: "Cierre", texto: [VINILO_CIERRE] }
+};
 
-// Reescritura defensiva de manejo de imágenes y toggles para evitar errores si el DOM no está exactamente como se espera
+const SEQUENCE = [
+{ type: "vinilo", id: "texto-artista-tabique" },
+{ type: "obra", id: "antes-de-encontrar" },
+{ type: "vinilo", id: "vinilo-paisaje" },
+{ type: "obra", id: "luz-retenida" },
+{ type: "obra", id: "hacia-arriba" },
+{ type: "obra", id: "cerro-encendido" },
+{ type: "obra", id: "entre-fragmentos" },
+{ type: "obra", id: "llanura-interior" },
+{ type: "vinilo", id: "vinilo-bisagra" },
+{ type: "obra", id: "antes-de-ver" },
+{ type: "vinilo", id: "vinilo-figura" },
+{ type: "obra", id: "en-el-umbral" },
+{ type: "obra", id: "mirada-encarnada" },
+{ type: "obra", id: "ardiente-calma" },
+{ type: "obra", id: "sin-distancia" },
+{ type: "obra", id: "pupila-azul" },
+{ type: "obra", id: "no-caigas" },
+{ type: "obra", id: "antes-de-reconocer" },
+{ type: "vinilo", id: "vinilo-cierre-recorrido" },
+{ type: "epilogo", id: "epilogo" }
+];
+
+const IMG_EXTS = ['jpg','JPG','jpeg','JPEG','png','PNG'];
+function imgSrcAt(id,i){ return `img/${id}.${IMG_EXTS[i]}` }
+function imgPath(id){ return imgSrcAt(id,0) }
+const PORTADA_IMG = imgSrcAt('portada',0);
+
 function handleImgError(img, phId) {
   try {
-    // Compatibilidad: aceptar data-ext-idx o dataset.extIdx
     const currentIdx = parseInt(img.dataset.extIdx ?? img.getAttribute('data-ext-idx') ?? '0', 10);
     const i = currentIdx + 1;
     if (i < IMG_EXTS.length) {
       img.dataset.extIdx = String(i);
-      // intentamos obtener el id (dataset o atributo) antes de construir el src
       const imgid = img.dataset.imgid ?? img.getAttribute('data-imgid') ?? '';
       if (imgid) {
         img.src = imgSrcAt(imgid, i);
       } else {
         console.warn('handleImgError: no data-imgid on element, cannot try next extension');
         img.style.display = 'none';
-        if (phId) {
-          const ph = document.getElementById(phId);
-          if (ph) ph.style.display = 'flex';
-        }
+        if (phId) { const ph = document.getElementById(phId); if (ph) ph.style.display = 'flex'; }
       }
     } else {
-      // agotadas las extensiones: ocultar imagen y mostrar placeholder si existe
       img.style.display = 'none';
-      if (phId) {
-        const ph = document.getElementById(phId);
-        if (ph) ph.style.display = 'flex';
-      }
+      if (phId) { const ph = document.getElementById(phId); if (ph) ph.style.display = 'flex'; }
     }
   } catch (e) {
     console.error('handleImgError failed', e);
   }
 }
-
 function handleObraImgLoad(img, id) {
   try {
     img.style.display = 'block';
@@ -313,78 +193,190 @@ function handleObraImgLoad(img, id) {
   }
 }
 
-/* ============ ROUTING Y RENDER ============ */
+function getRoute(){ const hash = location.hash.replace('#',''); if(!hash||hash==='/') return {type:'home'}; if(OBRAS[hash]) return {type:'obra', id:hash}; if(VINILOS[hash]) return {type:'vinilo', id:hash}; if(hash==='pieza-umbral-revelada') return {type:'final', id:hash}; if(hash==='biografia') return {type:'biografia'}; if(hash==='epilogo') return {type:'epilogo'}; if(hash==='catalogo') return {type:'catalogo'}; return {type:'home'} }
+function seqNeighbors(id){ const idx = SEQUENCE.findIndex(item => item.id===id); if(idx===-1) return {prev:null,next:null}; return { prev: idx>0 ? SEQUENCE[idx-1] : null, next: idx < SEQUENCE.length-1 ? SEQUENCE[idx+1] : null } }
 
-function getRoute() {
-  const hash = location.hash.replace('#', '');
-  if (!hash || hash === '/') return { type: 'home' };
-  if (OBRAS[hash]) return { type: 'obra', id: hash };
-  if (VINILOS[hash]) return { type: 'vinilo', id: hash };
-  if (hash === 'pieza-umbral-revelada') return { type: 'final', id: hash };
-  if (hash === 'biografia') return { type: 'biografia' };
-  if (hash === 'epilogo') return { type: 'epilogo' };
-  if (hash === 'catalogo') return { type: 'catalogo' };
-  return { type: 'home' };
-}
+function setTheme(t){ document.documentElement.setAttribute('data-theme', t); localStorage.setItem('rys-theme', t) }
+function initTheme(){ const saved = localStorage.getItem('rys-theme'); if(saved){ setTheme(saved); return } const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; setTheme(prefersDark ? 'dark' : 'light') }
+function toggleTheme(){ const cur = document.documentElement.getAttribute('data-theme'); setTheme(cur==='dark' ? 'light' : 'dark') }
 
-function seqNeighbors(id) {
-  const idx = SEQUENCE.findIndex(item => item.id === id);
-  if (idx === -1) return { prev: null, next: null };
-  return {
-    prev: idx > 0 ? SEQUENCE[idx - 1] : null,
-    next: idx < SEQUENCE.length - 1 ? SEQUENCE[idx + 1] : null
-  };
-}
-
-function setTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('rys-theme', t);
-}
-function initTheme() {
-  const saved = localStorage.getItem('rys-theme');
-  if (saved) { setTheme(saved); return; }
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  setTheme(prefersDark ? 'dark' : 'light');
-}
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  setTheme(cur === 'dark' ? 'light' : 'dark');
-}
-
-function header(showBackHome) {
-  return `
-  <header class="top">
-    <div>
-      <div class="brand" onclick="location.hash=''">
-        <span>Reflejos y</span><span>sombras</span>
+function header(){ return `
+    <header class="top">
+      <div>
+        <div class="brand" onclick="location.hash=''">
+          <span>Reflejos y</span><span>sombras</span>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
       </div>
-      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
-    </div>
-    <div class="expo-meta">Palacio de Villahermosa · Huesca · 2026</div>
-  </header>`;
+      <div class="expo-meta">Palacio de Villahermosa · Huesca · 2026</div>
+    </header>` }
+function footer(){ return `
+    <footer class="bottom">
+      <span class="artist-sig">Javier Sanagustín Moreu</span>
+      <span class="expo-dates">Huesca · 8 oct – 11 nov 2026</span>
+    </footer>` }
+const CATALOG_URL = null;
+function catalogBtn(){ const url = CATALOG_URL || '#'; const disabledAttr = CATALOG_URL ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo todavía no está disponible para comprar.\');"'; return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo<small>Comprarlo es apoyar directamente este proyecto.</small></a>` }
+
+function renderHome(){
+const worklistHtml = ORDEN.map((id,i)=>{ const o = OBRAS[id]; const dotHtml = o.clase ? `<span class="dot ${o.clase}"></span>` : ''; return `<li><a href="#${id}"><span class="num">${String(i+1).padStart(2,'0')}</span><span class="name">${o.titulo.replace(/<\/?em>/g,'')}</span>${dotHtml}</a></li>` }).join('');
+return `
+    ${header()}
+    <main>
+      <img class="home-portada" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this, 'portada-ph')">
+      <div id="portada-ph" class="obra-image" style="display:none; aspect-ratio:3/4; margin-bottom:40px;">
+        <span class="placeholder">img/portada.jpg</span>
+      </div>
+      <div class="vinilo-wrap">
+        <p class="vinilo">${VINILO_APERTURA}</p>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot reflejo"></span>Reflejo</span>
+        <span class="legend-item"><span class="dot sombra"></span>Sombra</span>
+      </div>
+      <ul class="worklist">${worklistHtml}</ul>
+      <a class="catalog-btn" href="#biografia" style="margin-top:40px;">Biografía<small>Sobre Javier Sanagustín Moreu y la escuela.</small></a>
+      <a class="catalog-btn" href="#catalogo" style="margin-top:14px;">Catálogo de obra<small>Técnica, medidas y año de las catorce obras.</small></a>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function adquirirObraAcc(id){ const info = { precio:null, disponible:false }; let bodyHtml = `<p style="color:var(--fg-faint); font-style:italic;">Información de venta no disponible.</p>`;
+return `
+    <div class="acc-item" data-acc="adquirir-${id}">
+      <button class="acc-head" onclick="toggleAcc(this)"><span>Adquirir obra</span><span class="acc-plus">+</span></button>
+      <div class="acc-body"><div class="acc-body-inner">${bodyHtml}</div></div>
+    </div>` }
+
+function renderObra(id){ const o = OBRAS[id]; const idx = ORDEN.indexOf(id); const {prev,next} = seqNeighbors(id);
+const refLinkHtml = o.referencia_link ? `<a class="acc-ref-link" href="${o.referencia_link.url}" target="_blank" rel="noopener">${o.referencia_link.autor} ↗</a>` : '';
+return `
+    <header class="top">
+      <div>
+        <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+      </div>
+      <div class="navrow">
+        <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+        <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+      </div>
+    </header>
+    <main>
+      <div class="block-row">
+        <span class="label">${o.bloque}</span>
+        <span class="label">${String(idx+1).padStart(2,'0')} / ${ORDEN.length}</span>
+      </div>
+      <img class="obra-frame" style="display:none;" src="${imgSrcAt(id,0)}" data-imgid="${id}" data-ext-idx="0" onload="handleObraImgLoad(this, '${id}')" onerror="handleImgError(this,'obra-ph')" alt="">
+      <div id="obra-ph" class="obra-image">
+        <span class="placeholder">img/${id}.[jpg|png]</span>
+      </div>
+      <div class="tech-row"><span>${o.tecnica}</span><span>${o.dimensiones}</span></div>
+      <h1 class="titulo">${o.titulo}</h1>
+      <div class="cuerpo">${o.obra.map(p=>`<p>${p}</p>`).join('')}</div>
+      <div class="accordion">
+        <div class="acc-item" data-acc="proceso-${id}">
+          <button class="acc-head" onclick="toggleAcc(this)"><span>El proceso</span><span class="acc-plus">+</span></button>
+          <div class="acc-body"><div class="acc-body-inner">${o.proceso.map(p=>`<p>${p}</p>`).join('')}</div></div>
+        </div>
+        <div class="acc-item" data-acc="referencia-${id}">
+          <button class="acc-head" onclick="toggleAcc(this)"><span>La referencia</span><span class="acc-plus">+</span></button>
+          <div class="acc-body"><div class="acc-body-inner">${o.referencia_texto.map(p=>`<p>${p}</p>`).join('')}${refLinkHtml}</div></div>
+        </div>
+        ${adquirirObraAcc(id)}
+      </div>
+      <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Pulsa aquí para descargar la imagen en alta resolución ↓</a>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function renderVinilo(id){ const v = VINILOS[id]; const {prev,next} = seqNeighbors(id); return `
+    <header class="top">
+      <div>
+        <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+      </div>
+      <div class="navrow">
+        <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+        <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+      </div>
+    </header>
+    <main>
+      <div class="vinilo-screen">
+        <span class="label">${v.label}</span>
+        ${v.texto.map(p=>`<p>${p}</p>`).join('')}
+      </div>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function renderFinal(id){ const {prev,next} = seqNeighbors(id); return `
+    ${header()}
+    <main>
+      <div class="portada-revisit" style="border-top:none; padding-top:10px;">
+        <img class="home-portada small" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this)">
+        <button class="portada-revisit-toggle" onclick="togglePortada()">¿Qué hay debajo de esta imagen?</button>
+        <div class="portada-hidden-text" id="portada-hidden">
+          <div class="inner">
+            <p class="label" style="margin-bottom:14px;">La obra</p>
+            <p style="margin-bottom:20px;">Texto de la portada (resumido).</p>
+            <p class="label" style="margin:30px 0 14px;">El proceso</p>
+            <p>Proceso resumido.</p>
+          </div>
+        </div>
+      </div>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function toggleAcc(btn){ btn.parentElement.classList.toggle('open') }
+function togglePortada(){ const el = document.getElementById('portada-hidden'); if(el) el.classList.toggle('open') }
+
+function renderBiografia(){ return `
+    ${header()}
+    <main>
+      <span class="label">Biografía</span>
+      <h1 class="titulo" style="font-size:34px; margin-top:14px;">Javier Sanagustín Moreu</h1>
+      <div class="obra-image" style="width:150px; max-width:45%; aspect-ratio:3/4; margin:22px 0 26px;">
+        <span class="placeholder" style="font-size:9px; text-align:center; padding:6px;">img/biografia.[jpg|png]</span>
+      </div>
+      <div class="cuerpo"><p>Biografía (resumida).</p></div>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function renderEpilogo(){ const {prev,next} = seqNeighbors('epilogo'); return `
+    ${header()}
+    <main>
+      <span class="label">Epílogo</span>
+      <div class="cuerpo" style="margin-top:20px; font-style:italic;">
+        ${EPILOGO.map(p=>`<p>${p}</p>`).join('')}
+        <p style="margin-top:26px; font-size:22px;">${EPILOGO_FINAL}</p>
+      </div>
+      ${catalogBtn()}
+    </main>
+    ${footer()}
+  ` }
+
+function render(){ const route = getRoute(); let html = '';
+if(route.type==='home') html = renderHome();
+else if(route.type==='obra') html = renderObra(route.id);
+else if(route.type==='vinilo') html = renderVinilo(route.id);
+else if(route.type==='final') html = renderFinal(route.id);
+else if(route.type==='biografia') html = renderBiografia();
+else if(route.type==='epilogo') html = renderEpilogo();
+else html = renderHome();
+document.getElementById('app').innerHTML = html;
 }
 
-function footer() {
-  return `
-  <footer class="bottom">
-    <span class="artist-sig">Javier Sanagustín Moreu</span>
-    <span class="expo-dates">Huesca · 8 oct – 11 nov 2026</span>
-  </footer>`;
-}
-
-// catalogBtn, renderHome, renderObra, renderVinilo, etc. (sin cambios funcionales salvo los toggles)
-
-function toggleAcc(btn) {
-  const item = btn && btn.parentElement;
-  if (item) item.classList.toggle('open');
-}
-function togglePortada() {
-  const el = document.getElementById('portada-hidden');
-  if (el) el.classList.toggle('open');
-}
-
-// El resto del archivo permanece igual; no hacemos más cambios funcionales en este commit.
+window.addEventListener('hashchange', render);
+window.addEventListener('load', ()=>{ initTheme(); render(); });
 
 </script>
 </body>
 </html>
+      
