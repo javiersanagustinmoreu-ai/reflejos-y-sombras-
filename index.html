@@ -146,10 +146,12 @@
 
   /* ───────── HOME SCREEN ───────── */
   .home-portada {
-    width: 100%; aspect-ratio: 3/4; max-height: 62vh; object-fit: contain; background: var(--bg-raised);
-    border: 1px solid var(--line); margin: 8px 0 40px; display:block;
+    display:block; max-width:100%; width:auto; max-height:62vh; height:auto;
+    padding: 18px; background:#FFFFFF; border: 1px solid var(--line);
+    margin: 8px auto 40px; box-sizing:border-box;
   }
-  .home-portada.small { max-height: 220px; aspect-ratio: auto; width: auto; margin: 0 auto 18px; display:block; }
+  @media (min-width: 640px) { .home-portada { padding: 28px; } }
+  .home-portada.small { max-height: 220px; margin: 0 auto 18px; padding: 12px; }
 
   .vinilo { font-size: 21px; line-height: 1.6; font-style: italic; color: var(--fg); margin-bottom: 8px; }
   .vinilo-wrap { padding: 10px 0 36px; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
@@ -480,7 +482,7 @@ const OBRAS = {
     referencia_link: { autor: "Peter Paul Rubens — San Jorge y el dragón", url: "https://www.museodelprado.es/coleccion/obra-de-arte/lucha-de-san-jorge-y-el-dragon/dea0a4cc-110e-425e-a8e2-bdb37444d26c" }
   },
   "antes-de-reconocer": {
-    bloque: "Cierre", titulo: "Antes de <em>reconocer</em>", clase: "sombra", pendiente: true,
+    bloque: "Cierre", titulo: "Antes de <em>reconocer</em>", clase: "sombra",
     tecnica: "Óleo sobre lienzo", dimensiones: "97 × 162 cm", ano: "2026",
     obra: [
       "No sé si ves lo mismo que yo. Nunca lo sabré del todo. Aquí no me ves a mí. Ves mi imagen. Ves mi sombra. Ella te pone donde estoy yo. Me ves como yo me pinto. Con tus ojos, no los míos. Algo tuyo y algo mío, mezclado."
@@ -865,8 +867,6 @@ function renderObra(id) {
 
     <h1 class="titulo">${o.titulo}</h1>
 
-    ${o.pendiente ? '<div class="pendiente-flag">Texto en revisión, no cerrado del todo</div>' : ''}
-
     <div class="cuerpo">${o.obra.map(p=>`<p>${p}</p>`).join('')}</div>
 
     <div class="accordion">
@@ -884,7 +884,7 @@ function renderObra(id) {
       </div>
       ${adquirirObraAcc(id)}
     </div>
-    <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Imagen en alta resolución ↓</a>
+    <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Pulsa aquí para descargar la imagen en alta resolución ↓</a>
     ${catalogBtn()}
   </main>
   ${footer()}
@@ -965,11 +965,11 @@ function renderBiografia() {
   </header>
   <main>
     <span class="label">Biografía</span>
-    <img class="obra-frame" style="display:none; margin-top:14px;" src="${imgSrcAt('biografia', 0)}" data-imgid="biografia" data-ext-idx="0" onload="handleObraImgLoad(this, 'biografia')" onerror="handleImgError(this)" alt="Javier Sanagustín Moreu">
-    <div class="obra-image" style="margin-top:14px;">
-      <span class="placeholder">img/biografia.[jpg|png]</span>
+    <h1 class="titulo" style="font-size:34px; margin-top:14px;">Javier Sanagustín Moreu</h1>
+    <img class="obra-frame" style="display:none; width:150px; max-width:45%; margin:22px 0 26px;" src="${imgSrcAt('biografia', 0)}" data-imgid="biografia" data-ext-idx="0" onload="handleObraImgLoad(this, 'biografia')" onerror="handleImgError(this)" alt="Javier Sanagustín Moreu">
+    <div class="obra-image" style="width:150px; max-width:45%; aspect-ratio:3/4; margin:22px 0 26px;">
+      <span class="placeholder" style="font-size:9px; text-align:center; padding:6px;">img/biografia.[jpg|png]</span>
     </div>
-    <h1 class="titulo" style="font-size:34px; margin-top:20px;">Javier Sanagustín Moreu</h1>
     <div class="cuerpo">${BIOGRAFIA.map(p=>`<p>${p}</p>`).join('')}</div>
     <a href="#" style="display:inline-block; margin-top:20px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-soft); border-bottom:1px solid var(--line);">← Volver a la portada</a>
   </main>
