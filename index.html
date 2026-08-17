@@ -60,7 +60,7 @@
     text-transform: uppercase; color: var(--fg); line-height: 1.6; cursor: pointer; }
   .brand span { display: block; }
   .expo-meta { font-family: 'DM Sans', sans-serif; font-size: 10.5px; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--fg-faint); text-align: right; max-width: 150px; }
+    text-transform: uppercase; color: var(--fg-faint); text-align: right; line-height: 1.6; }
 
   .theme-toggle {
     font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
@@ -69,7 +69,8 @@
   }
   .theme-toggle:hover { color: var(--fg); border-color: var(--fg-soft); }
 
-  header.top .navrow { display:flex; gap:8px; align-items:center; }
+  .navrow { display:flex; gap:8px; align-items:center; }
+  .navrow.bottom { justify-content:center; margin: 44px 0 8px; }
   .navbtn {
     width: 32px; height: 32px; border: 1px solid var(--line); background: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center; color: var(--fg-soft);
@@ -147,11 +148,11 @@
   /* ───────── HOME SCREEN ───────── */
   .home-portada {
     display:block; max-width:100%; width:auto; max-height:62vh; height:auto;
-    padding: 18px; background:#FFFFFF; border: 1px solid var(--line);
+    padding: 10px; background:#FFFFFF; border: 1px solid var(--line);
     margin: 8px auto 40px; box-sizing:border-box;
   }
-  @media (min-width: 640px) { .home-portada { padding: 28px; } }
-  .home-portada.small { max-height: 220px; margin: 0 auto 18px; padding: 12px; }
+  @media (min-width: 640px) { .home-portada { padding: 16px; } }
+  .home-portada.small { max-height: 220px; margin: 0 auto 18px; padding: 8px; }
 
   .vinilo { font-size: 21px; line-height: 1.6; font-style: italic; color: var(--fg); margin-bottom: 8px; }
   .vinilo-wrap { padding: 10px 0 36px; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
@@ -717,14 +718,14 @@ function header(showBackHome) {
       </div>
       <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
     </div>
-    <div class="expo-meta">Palacio de Villahermosa · Huesca · 2026</div>
+    <div class="expo-meta">Palacio de Villahermosa<br>Huesca<br>2026</div>
   </header>`;
 }
 
 function footer() {
   return `
   <footer class="bottom">
-    <span class="artist-sig">Javier Sanagustín Moreu</span>
+    <a class="artist-sig" href="#biografia" style="text-decoration:none;">Javier Sanagustín Moreu</a>
     <span class="expo-dates">Huesca · 8 oct – 11 nov 2026</span>
   </footer>`;
 }
@@ -737,7 +738,8 @@ const CATALOG_URL = null; // ej: "https://www.amazon.es/dp/XXXXXXXXXX"
 function catalogBtn() {
   const url = CATALOG_URL || '#';
   const disabledAttr = CATALOG_URL ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo todavía no está disponible para comprar.\');"';
-  return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo — 20€
+  return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo
+    <small>20€</small>
     <small>Comprarlo es apoyar directamente este proyecto.</small>
   </a>`;
 }
@@ -892,6 +894,10 @@ function renderObra(id) {
     </div>
     <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Pulsa aquí para descargar la imagen en alta resolución ↓</a>
     ${catalogBtn()}
+    <div class="navrow bottom">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
   </main>
   ${footer()}
   `;
@@ -917,6 +923,10 @@ function renderVinilo(id) {
       ${v.texto.map(p=>`<p>${p}</p>`).join('')}
     </div>
     ${catalogBtn()}
+    <div class="navrow bottom">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
   </main>
   ${footer()}
   `;
@@ -1005,6 +1015,10 @@ function renderEpilogo() {
     <div class="portada-revisit" style="border-top:none; padding-top:30px;">
       <span class="artist-sig">Javier Sanagustín Moreu</span>
     </div>
+    <div class="navrow bottom">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
   </main>
   ${footer()}
   `;
@@ -1034,8 +1048,7 @@ function renderCatalogo() {
   </header>
   <main>
     <span class="label">Catálogo de obra</span>
-    <h1 class="titulo" style="font-size:32px; margin-top:14px; margin-bottom:26px;">Las catorce obras</h1>
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; margin-top:26px;">
       <table style="width:100%; border-collapse:collapse; font-size:15px;">
         <thead>
           <tr style="border-bottom:1px solid var(--line);">
