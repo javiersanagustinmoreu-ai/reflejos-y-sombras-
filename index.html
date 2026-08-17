@@ -28,7 +28,18 @@
       .dot.reflejo { background: #FBF8F2; border: 1.3px solid #1C1C1A; }
       .dot.sombra { background: #1C1C1A; border: 1.3px solid #1C1C1A; }
       
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }img { max-width: 100%; height: auto; display: block; }
+
+.home-portada {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  margin-bottom: 40px;
+}
+.home-portada.small {
+  aspect-ratio: 1/1;
+  margin-bottom: 20px;
+}
       html { scroll-behavior: smooth; }
       body {
         background: var(--bg);
