@@ -1,393 +1,1083 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reflejos y sombras — Javier Sanagustín Moreu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --bg: #F2EDE3;
-        --bg-raised: #FBF8F2;
-        --fg: #1C1C1A;
-        --fg-soft: #6B665C;
-        --fg-faint: #A39D8F;
-        --accent: #1E2A5E;
-        --line: #D9D2C3;
-      }
-      [data-theme="dark"] {
-        --bg: #14141a;
-        --bg-raised: #1b1b22;
-        --fg: #E8E4D8;
-        --fg-soft: #948F82;
-        --fg-faint: #56534a;
-        --accent: #7C8CE0;
-        --line: #2c2c34;
-      }
-      .dot.reflejo { background: #FBF8F2; border: 1.3px solid #1C1C1A; }
-      .dot.sombra { background: #1C1C1A; border: 1.3px solid #1C1C1A; }
-      
-      * { margin: 0; padding: 0; box-sizing: border-box; }img { max-width: 100%; height: auto; display: block; }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflejos y sombras — Javier Sanagustín Moreu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2EDE3;
+    --bg-raised: #FBF8F2;
+    --fg: #1C1C1A;
+    --fg-soft: #6B665C;
+    --fg-faint: #A39D8F;
+    --accent: #1E2A5E;
+    --line: #D9D2C3;
+  }
+  [data-theme="dark"] {
+    --bg: #14141a;
+    --bg-raised: #1b1b22;
+    --fg: #E8E4D8;
+    --fg-soft: #948F82;
+    --fg-faint: #56534a;
+    --accent: #7C8CE0;
+    --line: #2c2c34;
+  }
+  /* El reflejo siempre blanco, la sombra siempre oscura, en cualquier modo */
+  .dot.reflejo { background: #FBF8F2; border: 1.3px solid #1C1C1A; }
+  .dot.sombra { background: #1C1C1A; border: 1.3px solid #1C1C1A; }
 
-.home-portada {
-  width: 100%;
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  margin-bottom: 40px;
-}
-.home-portada.small {
-  aspect-ratio: 1/1;
-  margin-bottom: 20px;
-}
-      html { scroll-behavior: smooth; }
-      body {
-        background: var(--bg);
-        color: var(--fg);
-        font-family: 'Cormorant Garamond', serif;
-        font-weight: 400;
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
-        transition: background .3s ease, color .3s ease;
-      }
-      .label { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-faint); }
-      #app { max-width: 640px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-      header.top { display: flex; justify-content: space-between; align-items: flex-start; padding: 28px 24px 18px; }
-      .brand { font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg); line-height: 1.6; cursor: pointer; }
-      .brand span { display:block }
-      .expo-meta { font-family: 'DM Sans', sans-serif; font-size: 10.5px; color: var(--fg-faint); text-align:right }
-      .theme-toggle { font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); background: none; border: 1px solid var(--line); border-radius: 20px; padding: 5px 12px; cursor: pointer; margin-top: 10px; }
-      .navrow { display:flex; gap:8px; align-items:center }
-      .navbtn { width: 32px; height: 32px; border: 1px solid var(--line); background: none; cursor: pointer; display:flex; align-items:center; justify-content:center; color:var(--fg-soft); font-family:'DM Sans',sans-serif }
-      main { flex:1; padding: 6px 24px 60px; }
-      footer.bottom { padding: 20px 24px 36px; display:flex; justify-content:space-between; border-top:1px solid var(--line); margin-top:40px }
-      .artist-sig { font-style: italic; font-size: 15px; color: var(--fg-faint); }
-      .expo-dates { font-family:'DM Sans',sans-serif; font-size:10px; color:var(--fg-faint) }
-      .obra-image { width:100%; aspect-ratio:4/3; background:var(--bg-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; margin-bottom:34px }
-      .obra-image .placeholder { font-family:'DM Sans',sans-serif; font-size:10.5px; color:var(--fg-faint); text-transform:uppercase }
-      .obra-frame { display:block; width:100%; height:auto; padding:18px; background:#fff; border:1px solid var(--line); margin-bottom:34px }
-      .tech-row { display:flex; justify-content:space-between; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--fg-soft); padding:10px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:28px }
-      h1.titulo { font-size:44px; margin-bottom:30px }
-      .cuerpo p { font-size:19px; line-height:1.65; margin-bottom:18px }
-      .accordion { border-top:1px solid var(--line); margin-top:20px }
-      .acc-head { width:100%; background:none; border:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:18px 0; font-family:'DM Sans',sans-serif; font-size:11.5px; color:var(--fg-faint) }
-      .acc-body { max-height:0; overflow:hidden; transition:max-height .35s ease }
-      .acc-item.open .acc-body { max-height:1400px }
-      .catalog-btn { display:block; text-align:center; font-family:'DM Sans',sans-serif; font-size:11.5px; border:1px solid var(--line); padding:16px; margin-top:40px; text-decoration:none; color:var(--fg) }
-      .legend { display:flex; gap:22px; margin:-14px 0 40px }
-      .dot { width:9px; height:9px; border-radius:50% }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    
-    <script>
-      /* Simplified and sanitized data to avoid truncated strings and syntax errors. */
-      const ORDEN = [
-        "antes-de-encontrar","luz-retenida","hacia-arriba","cerro-encendido",
-        "entre-fragmentos","llanura-interior","antes-de-ver","en-el-umbral",
-        "mirada-encarnada","ardiente-calma","sin-distancia","pupila-azul",
-        "no-caigas","antes-de-reconocer"
-        ];
-const OBRAS = {
-"antes-de-encontrar": {
-bloque: "Apertura",
-titulo: "Antes de <em>encontrar</em>",
-clase: "sombra",
-tecnica: "Técnica mixta sobre lienzo",
-dimensiones: "160 × 60 cm",
-ano: "2021",
-obra: ["Texto descriptivo de la obra (resumido)."],
-proceso: ["Notas sobre el proceso."],
-referencia_texto: ["Referencia resumida."],
-referencia_link: null
-},
-"luz-retenida": {
-bloque: "Bloque paisaje",
-titulo: "Luz <em>retenida</em>",
-clase: "sombra",
-tecnica: "Óleo sobre lienzo",
-dimensiones: "120 × 110 cm",
-ano: "2025",
-obra: ["Texto descriptivo de la obra."],
-proceso: ["Notas sobre el proceso."],
-referencia_texto: ["Referencia resumida."],
-referencia_link: { autor: "Claude Monet — Agapanthus", url: "https://www.moma.org/" }
-},
-"hacia-arriba": { bloque: "Bloque paisaje", titulo: "Hacia <em>arriba</em>", clase: "sombra", tecnica: "Óleo sobre tabla", dimensiones: "Ø 80 cm", ano: "2022", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor: "Van Gogh", url: "https://historia-arte.com/" } },
-"cerro-encendido": { bloque: "Bloque paisaje", titulo: "Cerro <em>encendido</em>", clase: "sombra", tecnica: "Óleo sobre lienzo", dimensiones: "100 × 70 cm", ano: "2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor: "Piet Mondrian", url: "https://commons.wikimedia.org/" } },
-"entre-fragmentos": { bloque:"Bloque paisaje", titulo:"Entre <em>fragmentos</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"348 × 178 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"David Hockney", url:"https://www.guggenheim-bilbao.eus/" } },
-"llanura-interior": { bloque:"Bloque paisaje", titulo:"Llanura <em>interior</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"102 × 194 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Claire Tabouret", url:"https://clairetabouret.com/" } },
-"antes-de-ver": { bloque:"Bisagra", titulo:"Antes de <em>ver</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"116 × 81 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Georgia O'Keeffe", url:"https://www.museothyssen.org/" } },
-"en-el-umbral": { bloque:"Bloque figura", titulo:"En el <em>umbral</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"44.5 × 39 cm", ano:"2023", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Johannes Vermeer", url:"https://www.mauritshuis.nl/" } },
-"mirada-encarnada": { bloque:"Bloque figura", titulo:"Mirada <em>encarnada</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"77 × 53 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Leonardo da Vinci", url:"https://collections.louvre.fr/" } },
-"ardiente-calma": { bloque:"Bloque figura", titulo:"Ardiente <em>calma</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"120 × 120 cm", ano:"2024", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Frederic Leighton", url:"https://en.wikipedia.org/wiki/Flaming_June" } },
-"sin-distancia": { bloque:"Bloque figura", titulo:"Sin <em>distancia</em>", clase:"reflejo", tecnica:"Óleo sobre lienzo", dimensiones:"195 × 186 cm", ano:"2023", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Pablo Picasso", url:"https://www.moma.org/" } },
-"pupila-azul": { bloque:"Bloque figura", titulo:"Pupila <em>azul</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"116 × 89 cm", ano:"2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Henri Matisse", url:"https://www.centrepompidou.fr/" } },
-"no-caigas": { bloque:"Bloque figura", titulo:"No <em>caigas</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"180 × 230 cm", ano:"2025", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Peter Paul Rubens", url:"https://www.museodelprado.es/" } },
-"antes-de-reconocer": { bloque:"Cierre", titulo:"Antes de <em>reconocer</em>", clase:"sombra", tecnica:"Óleo sobre lienzo", dimensiones:"97 × 162 cm", ano:"2026", obra:["Descripción."], proceso:["Proceso."], referencia_texto:["Ref."], referencia_link: { autor:"Frida Kahlo", url:"https://casademexico.es/" } }
-};
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s ease, color .3s ease;
+  }
+  .label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+  }
 
-const VINILO_APERTURA = "Estos paisajes son de aquí. Estas personas son cercanas. Estos momentos son míos.";
-const VINILO_CIERRE = "Has recorrido paisajes que no existen y cuerpos que no se dejan nombrar.";
-const EPILOGO = ["Epilogo: texto resumido.", "Gracias por visitar." ];
-const EPILOGO_FINAL = "Es mi sombra en el reflejo de tus sentimientos.";
-const TEXTO_ARTISTA = ["Texto del artista."];
-const TEXTO_CURATORIAL = ["Texto curatorial resumido."];
+  /* ───────── SHELL ───────── */
+  #app { max-width: 640px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
 
-const VINILOS = {
-"texto-artista-tabique": { label: "Texto de artista", texto: TEXTO_ARTISTA },
-"vinilo-paisaje": { label: "Antes del bloque paisaje", texto: ["Texto del vinilo de paisaje."] },
-"vinilo-bisagra": { label: "Bisagra", texto: ["Algo cambia aquí.", "Tómate un momento antes de seguir."] },
-"vinilo-figura": { label: "Bloque figura", texto: ["La pintura no describe estos cuerpos."] },
-"vinilo-cierre-recorrido": { label: "Cierre", texto: [VINILO_CIERRE] }
-};
+  header.top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 28px 24px 18px;
+  }
+  .brand { font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--fg); line-height: 1.6; cursor: pointer; }
+  .brand span { display: block; }
+  .expo-meta { font-family: 'DM Sans', sans-serif; font-size: 10.5px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--fg-faint); text-align: right; max-width: 150px; }
 
-const SEQUENCE = [
-{ type: "vinilo", id: "texto-artista-tabique" },
-{ type: "obra", id: "antes-de-encontrar" },
-{ type: "vinilo", id: "vinilo-paisaje" },
-{ type: "obra", id: "luz-retenida" },
-{ type: "obra", id: "hacia-arriba" },
-{ type: "obra", id: "cerro-encendido" },
-{ type: "obra", id: "entre-fragmentos" },
-{ type: "obra", id: "llanura-interior" },
-{ type: "vinilo", id: "vinilo-bisagra" },
-{ type: "obra", id: "antes-de-ver" },
-{ type: "vinilo", id: "vinilo-figura" },
-{ type: "obra", id: "en-el-umbral" },
-{ type: "obra", id: "mirada-encarnada" },
-{ type: "obra", id: "ardiente-calma" },
-{ type: "obra", id: "sin-distancia" },
-{ type: "obra", id: "pupila-azul" },
-{ type: "obra", id: "no-caigas" },
-{ type: "obra", id: "antes-de-reconocer" },
-{ type: "vinilo", id: "vinilo-cierre-recorrido" },
-{ type: "epilogo", id: "epilogo" }
+  .theme-toggle {
+    font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fg-faint); background: none; border: 1px solid var(--line); border-radius: 20px;
+    padding: 5px 12px; cursor: pointer; margin-top: 10px;
+  }
+  .theme-toggle:hover { color: var(--fg); border-color: var(--fg-soft); }
+
+  header.top .navrow { display:flex; gap:8px; align-items:center; }
+  .navbtn {
+    width: 32px; height: 32px; border: 1px solid var(--line); background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; color: var(--fg-soft);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; border-radius: 2px;
+  }
+  .navbtn:disabled { opacity: .25; cursor: default; }
+  .navbtn:not(:disabled):hover { color: var(--fg); border-color: var(--fg-soft); }
+
+  main { flex: 1; padding: 6px 24px 60px; }
+
+  footer.bottom {
+    padding: 20px 24px 36px; display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--line); margin-top: 40px;
+  }
+  .artist-sig { font-style: italic; font-size: 15px; color: var(--fg-faint); }
+  .expo-dates { font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--fg-faint); }
+
+  /* ───────── OBRA SCREEN ───────── */
+  .block-row { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 60px; }
+
+  .obra-image {
+    width: 100%; aspect-ratio: 4/3; background: var(--bg-raised); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 34px;
+  }
+  .obra-image .placeholder { font-family:'DM Sans',sans-serif; font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--fg-faint); }
+
+  /* Marco adaptativo: el cuadro blanco se ajusta al formato real de cada
+     obra (vertical, horizontal, cuadrado, redondo...) en vez de forzar
+     todas las fotos a la misma proporción 4:3. El blanco es fijo,
+     independiente del modo claro/oscuro, como un passe-partout físico. */
+  .obra-frame {
+    display: block; width: 100%; height: auto; padding: 18px; background: #FFFFFF;
+    border: 1px solid var(--line); margin-bottom: 34px; box-sizing: border-box;
+  }
+  @media (min-width: 640px) { .obra-frame { padding: 28px; } }
+
+  .tech-row {
+    display: flex; justify-content: space-between; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; color: var(--fg-soft); padding: 10px 0; border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line); margin-bottom: 28px;
+  }
+
+  h1.titulo {
+    font-size: 44px; font-weight: 400; line-height: 1.15; margin-bottom: 30px; letter-spacing: -0.01em;
+  }
+  h1.titulo em { font-style: italic; color: var(--accent); font-weight: 400; }
+
+  .cuerpo p { font-size: 19px; line-height: 1.65; margin-bottom: 18px; color: var(--fg); }
+  .pendiente-flag {
+    font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .06em; color: #B5652A;
+    border: 1px solid #B5652A55; padding: 6px 10px; display: inline-block; margin-bottom: 18px; border-radius: 3px;
+  }
+
+  .accordion { border-top: 1px solid var(--line); margin-top: 20px; }
+  .acc-item { border-bottom: 1px solid var(--line); }
+  .acc-head {
+    width: 100%; background: none; border: none; cursor: pointer; text-align: left;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0; font-family: 'DM Sans', sans-serif; font-size: 11.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--fg-faint); gap: 20px;
+  }
+  .acc-head .sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px;
+    text-transform: none; letter-spacing: 0; color: var(--fg-soft); flex: 1; text-align: right; padding-right: 12px; }
+  .acc-plus { font-size: 20px; font-weight: 300; color: var(--fg-faint); flex-shrink: 0; transition: transform .25s ease; line-height:1;}
+  .acc-item.open .acc-plus { transform: rotate(45deg); }
+  .acc-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+  .acc-item.open .acc-body { max-height: 1400px; }
+  .acc-body-inner { padding: 0 0 26px; font-size: 18px; line-height: 1.65; }
+  .acc-body-inner p { margin-bottom: 14px; }
+  .acc-ref-link { display:inline-block; margin-top: 6px; font-family:'DM Sans',sans-serif; font-size: 11.5px;
+    letter-spacing:.05em; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); }
+
+  /* ───────── HOME SCREEN ───────── */
+  .home-portada {
+    display:block; max-width:100%; width:auto; max-height:62vh; height:auto;
+    padding: 18px; background:#FFFFFF; border: 1px solid var(--line);
+    margin: 8px auto 40px; box-sizing:border-box;
+  }
+  @media (min-width: 640px) { .home-portada { padding: 28px; } }
+  .home-portada.small { max-height: 220px; margin: 0 auto 18px; padding: 12px; }
+
+  .vinilo { font-size: 21px; line-height: 1.6; font-style: italic; color: var(--fg); margin-bottom: 8px; }
+  .vinilo-wrap { padding: 10px 0 36px; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
+
+  .legend { display: flex; gap: 22px; align-items: center; margin: -14px 0 40px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-family:'DM Sans',sans-serif; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--fg-soft); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display:inline-block; }
+
+  .home-accordion { margin-bottom: 40px; }
+
+  .worklist { list-style: none; margin-bottom: 32px; }
+  .worklist li { border-bottom: 1px solid var(--line); }
+  .worklist a {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 10px 0; text-decoration: none; color: var(--fg);
+  }
+  .worklist .num { font-family:'DM Sans',sans-serif; font-size: 10px; color: var(--fg-faint); width: 18px; flex-shrink:0; }
+  .worklist .name { font-style: italic; font-size: 17px; flex: 1; }
+  .worklist a:hover .name { color: var(--accent); }
+  @media (min-width: 480px) {
+    .worklist { column-count: 2; column-gap: 32px; }
+    .worklist li { break-inside: avoid; }
+  }
+
+  .cierre-vinilo { font-style: italic; font-size: 19px; line-height: 1.6; color: var(--fg-soft);
+    padding: 30px 0; border-top: 1px solid var(--line); margin-bottom: 30px; }
+
+  .portada-revisit { text-align: center; padding: 30px 0 10px; border-top: 1px solid var(--line); }
+  .portada-revisit-toggle {
+    background: none; border: none; cursor: pointer; font-family:'DM Sans',sans-serif;
+    font-size: 11px; letter-spacing: .08em; color: var(--fg-faint); text-transform: uppercase;
+    padding: 6px 0; margin-top: 4px;
+  }
+  .portada-revisit-toggle:hover { color: var(--fg-soft); }
+  .portada-hidden-text { max-height: 0; overflow: hidden; transition: max-height .4s ease; text-align: left; }
+  .portada-hidden-text.open { max-height: 2000px; }
+  .portada-hidden-text .inner { padding-top: 22px; font-size: 17.5px; line-height: 1.7; color: var(--fg-soft); }
+  .portada-hidden-text .inner p { margin-bottom: 14px; }
+
+  .catalog-btn {
+    display: block; text-align: center; font-family:'DM Sans',sans-serif; font-size: 11.5px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--fg); text-decoration: none;
+    border: 1px solid var(--line); padding: 16px; margin-top: 40px;
+  }
+  .catalog-btn small { display:block; font-size: 10px; color: var(--fg-faint); margin-top: 6px; letter-spacing: .04em; text-transform: none; font-style: italic; }
+  .catalog-btn:hover { border-color: var(--fg-soft); }
+
+  .hires-link {
+    display: block; text-align: center; font-family:'DM Sans',sans-serif; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--fg-soft); text-decoration: none;
+    border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-top: 32px;
+  }
+  .hires-link:hover { color: var(--fg); border-color: var(--fg-soft); }
+
+  @media (max-width: 480px) {
+    h1.titulo { font-size: 34px; }
+    .cuerpo p, .acc-body-inner { font-size: 17px; }
+  }
+
+  /* ───────── VINILO (pantalla intercalada de bloque) ───────── */
+  .vinilo-screen {
+    min-height: 60vh; display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start; padding: 40px 0;
+  }
+  .vinilo-screen .label { margin-bottom: 26px; }
+  .vinilo-screen p {
+    font-style: italic; font-size: 30px; line-height: 1.5; color: var(--fg);
+    max-width: 480px;
+  }
+  .vinilo-screen p + p { margin-top: 18px; }
+  @media (max-width: 480px) {
+    .vinilo-screen p { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ DATOS ============ */
+
+// Orden real de recorrido en sala (RyS_vinilos_sala_definitivo.docx)
+const ORDEN = [
+  "antes-de-encontrar","luz-retenida","hacia-arriba","cerro-encendido",
+  "entre-fragmentos","llanura-interior","antes-de-ver","en-el-umbral",
+  "mirada-encarnada","ardiente-calma","sin-distancia","pupila-azul",
+  "no-caigas","antes-de-reconocer"
 ];
 
-const IMG_EXTS = ['jpg','JPG','jpeg','JPEG','png','PNG'];
-function imgSrcAt(id,i){ return `img/${id}.${IMG_EXTS[i]}` }
-function imgPath(id){ return imgSrcAt(id,0) }
-const PORTADA_IMG = imgSrcAt('portada',0);
+const OBRAS = {
+  "antes-de-encontrar": {
+    bloque: "Apertura", titulo: "Antes de <em>encontrar</em>", clase: "sombra",
+    tecnica: "Técnica mixta sobre lienzo", dimensiones: "160 × 60 cm", ano: "2021",
+    obra: [
+      "Este es el primer gesto, el más primitivo, el más libre, el que no tenía aún nada que demostrar. La idea de la exposición ya existía en texto, en notas, en una dirección intuida. Pero la pintura todavía no había empezado.",
+      "La mancha decidió sola."
+    ],
+    proceso: [
+      "La técnica mixta permitió lo que el óleo solo no permite. El blanco es la nieve, la mancha que da volumen al fondo desde el que todo emerge. El azul nace del lago y lo inunda todo, se expande, cruza el lienzo de lado a lado, sube hacia la mancha, cae en chorretones verticales que tensan lo que el lago quiere disolver.",
+      "El negro de tinta irrumpe como una fuerza distinta, salpica, fluye, marca. Es el gesto más directo de la obra, el que no calcula ni corrige. Donde el azul se expande, el negro explota.",
+      "Los árboles de la derecha nacen al revés, emergen de la mancha ya hecha, como si el paisaje se construyera desde el fondo hacia fuera."
+    ],
+    referencia_texto: [
+      "Monet demostró que las sombras y los blancos de la nieve se llenan de color contenido. El color nace sobre el volumen ya construido en blanco. El azul inunda rápido y fluido, como el color invadía los blancos de Monet.",
+      "Pero el negro es puro. Monet evitaba la ausencia con el color. Aquí se evita con el gesto, la agresividad de la mancha, el chorretón. De ahí emergen los árboles.",
+      "Una sola referencia. Encontrada, no buscada."
+    ],
+    referencia_link: null
+  },
+  "luz-retenida": {
+    bloque: "Bloque paisaje", titulo: "Luz <em>retenida</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "120 × 110 cm", ano: "2025",
+    obra: [
+      "Una mañana fría. Un paseo cualquiera por el parque, con los edificios cercanos bloqueando la luz. Entre esa penumbra, haces de luz esquivaban los obstáculos y revelaban pequeñas zonas de color, no calentaban pero mostraban.",
+      "Así apareció, un tulipán rojo, único, despierto entre líneas finas de verde y azul, entre compañeras aún apagadas.",
+      "La realidad que interesaba no era botánica. Era pictórica."
+    ],
+    proceso: [
+      "La obra se construyó desde el recuerdo. Lo que guió el pincel fue la sensación, el peso del follaje, la tensión de los verdes sucios amenazando con devorarlo todo, el frío que lo envolvía todo menos a él.",
+      "El empaste es deliberadamente denso, casi difícil de mover. Las sombras son rosas sucias, los rojos oscuros, los verdes casi negros. Todo contiene, todo encierra, hasta que el tulipán central rompe el empaste con una pincelada de rojo cadmio sin mezclar."
+    ],
+    referencia_texto: [
+      "Agapanthus pertenece a las grandes décorations. Monet las pintó en el estudio que construyó en Giverny durante los últimos años de su vida, con el agua de los estanques rodeándolo y con las cataratas alterando su percepción del color. Son obras de memoria acumulada, de décadas mirando el mismo estanque hasta que el motivo dejó de ser exterior y pasó a ser completamente interior.",
+      "Eso es lo que conecta con Luz retenida. Es la decisión de pintar desde lo que quedó. La fotografía capturó el tulipán. La pintura lo reconstruyó desde la sensación. Monet no necesitaba ver el estanque para pintarlo. Llevaba décadas dentro de él."
+    ],
+    referencia_link: { autor: "Claude Monet — Agapanthus", url: "https://www.moma.org/collection/works/79922" }
+  },
+  "hacia-arriba": {
+    bloque: "Bloque paisaje", titulo: "Hacia <em>arriba</em>", clase: "sombra",
+    tecnica: "Óleo sobre tabla", dimensiones: "Ø 80 cm", ano: "2022",
+    obra: [
+      "Mirar hacia arriba. Quería pasear y mirar como Van Gogh en sus almendros en flor. No el árbol, desde dentro del árbol.",
+      "El formato amplía esa mirada como lo haría el ojo, sin esquinas, sin límites, sin horizonte. Solo cielo y ramas. Dos árboles. Sin separarse. No sabía si intentando tocarse o evitarse. Pero ahí estaban, en el centro, con esa tensión que no se resuelve. Y solo el viento se atreve a juntarlos."
+    ],
+    proceso: [
+      "Las líneas son moradas. Las hojas no se describen, se sugieren, cada una un gesto rápido. El azul del cielo no es fondo neutro sino presencia activa que respira entre la maraña de ramas.",
+      "En el centro, casi sin querer, dos ramas avanzan la una hacia la otra sin llegar a tocarse."
+    ],
+    referencia_texto: [
+      "Van Gogh pintó los almendros en flor, llenó el lienzo de ramas contra el cielo. Lo pintó como regalo, por una vida que empezaba. Aquí no hay esquinas, no hay límites, no hay horizonte. Solo cielo y ramas. Estar dentro del árbol, no mirarlo desde fuera, como quien vuelve a nacer dentro de algo que ya estaba ahí.",
+      "Hay un segundo gesto escondido entre las ramas. Dos formas que avanzan sin tocarse. Si no lo buscas, no lo ves. Pero está ahí, como lleva siglos estando en el techo de la Capilla Sixtina."
+    ],
+    referencia_link: { autor: "Vincent van Gogh — Almendro en flor", url: "https://historia-arte.com/obras/almendro-en-flor-de-van-gogh" }
+  },
+  "cerro-encendido": {
+    bloque: "Bloque paisaje", titulo: "Cerro <em>encendido</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "100 × 70 cm", ano: "2025",
+    obra: [
+      "Una tarde saliendo del Alcoraz. El cerro de San Jorge, con la luz encendiéndolo todo. No incendiado pero igualmente violento. El naranja tiñendo los árboles desde dentro, como si la luz viniera del interior del cerro.",
+      "El contraste obliga. El azul frío y denso del bosque hace que el naranja de las ramas no tenga otra opción que gritar."
+    ],
+    proceso: [
+      "Los troncos grandes anclan la composición verticalmente, pesados, casi arquitectónicos. Pero conforme bajan hacia el suelo se aligeran, pierden definición, se convierten en líneas, en chorreras, en gestos sin detalle. La pintura se adelgaza donde la realidad se vuelve menos importante. Esa diferencia de materia crea profundidad sin necesidad de perspectiva.",
+      "El azul es una decisión emocional, ultramar y prusia mezclados en distintas densidades, algunos pasajes casi negros, otros casi eléctricos. El naranja de las ramas delgadas trabaja por vibración, la pareja cromática de máxima tensión. Juntos no descansan."
+    ],
+    referencia_texto: [
+      "Mondrian pintó el árbol ardiendo desde la raíz. El rojo sube desde la tierra, el azul lo rodea por todas partes sin apagarlo. Un árbol que no arde por fuera sino desde dentro.",
+      "Yo buscaba exactamente eso. Tenía el recuerdo del cerro y necesitaba la sensación de color que lo contara. En Mondrian encontré ese instante, cuando el color ya no describe sino que quema."
+    ],
+    referencia_link: { autor: "Piet Mondrian — El árbol rojo", url: "https://commons.wikimedia.org/wiki/File:Piet_Mondrian,_1908-10,_Evening;_Red_Tree_(Avond;_De_rode_boom),_oil_on_canvas,_70_x_99_cm,_Gemeentemuseum_Den_Haag.jpg" }
+  },
+  "entre-fragmentos": {
+    bloque: "Bloque paisaje", titulo: "Entre <em>fragmentos</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo · Políptico", dimensiones: "348 × 178 cm", ano: "2026",
+    obra: [
+      "Este sauce lleva años en el Parque de las Olas. Una arquitectura viva que crece hasta dejarse caer.",
+      "Y no bastaba una pequeña mirada.",
+      "Aquí hay algo que solo ocurre cuando estás a sus pies. No viéndolo desde lejos, no en una foto. A sus pies. Una calidez que no viene del árbol sino de dentro de ti, que sube despacio, que pesa. Donde las ramas caen hacia ti, cubriéndote."
+    ],
+    proceso: [
+      "El azul en zonas planas para que el protagonismo sea de las ramas. Los verdes saturados caen del árbol. El naranja es lo que sale de ti, lo que el cuerpo genera al estar a sus pies. Dos fuerzas que avanzan la una hacia la otra en ese tronco que estructura y enraíza el caos sin domesticarlo.",
+      "Al pintarlo entendí algo que no sabía antes de empezar, que esa calidez no es solo mía, que él también la siente."
+    ],
+    referencia_texto: [
+      "Hockney volvió a Yorkshire después de años en California. Pintó sus caminos, sus árboles en distintos momentos, con luces distintas. Los colores que la naturaleza le hacía sentir sin ser fiel a la realidad.",
+      "En eso lo reconocí. El azul que no es descriptivo. El naranja que no es del árbol. El color como única manera honesta de decir lo que ocurre cuando estás dentro de un paisaje que te pertenece.",
+      "Pensó en mirar un cuadro como se mira un paisaje. Varios lienzos a la vez, el ojo no se queda quieto frente a un solo marco, salta de uno a otro, busca, reconstruye. Así se mira un paisaje. Un solo lienzo habría contenido el árbol. Seis fragmentos lo habitan."
+    ],
+    referencia_link: { autor: "David Hockney — El bosque de Woldgate", url: "https://www.guggenheim-bilbao.eus/exposicion/el-bosque-de-woldgate-21-23-y-29-de-noviembre-de-2006" }
+  },
+  "llanura-interior": {
+    bloque: "Bloque paisaje", titulo: "Llanura <em>interior</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "102 × 194 cm", ano: "2026",
+    obra: [
+      "Este paisaje no existe. Son fragmentos, distancias imposibles, recuerdos que ya olvidaron su origen. No hay un punto exacto desde el que mirar porque no se busca un lugar, se busca la imagen que queda cuando la memoria ha terminado su trabajo.",
+      "Mares de ocre quebrados por islotes verdes. Tozales que emergen sin estridencia. Una carrasca en el centro que no es presencia sino insistencia, un punto donde algo propio se vuelve reconocible. Verde tierra que vira a amarillo. Aragón.",
+      "Y siempre, serpenteando, una línea que conduce la mirada hasta donde termina todo, la sierra. Demasiado presente. Como sucede en la memoria cuando algo se vuelve inevitable."
+    ],
+    proceso: [
+      "La mancha debía decidir antes que el pincel. Dejé que el paisaje emocional emergiera. La luz naranja brota desde la base como fuego interno que contamina sin destruir.",
+      "La sierra rompe la escala sin aviso. La copa de la carrasca se descompone en los verdes y amarillos del fondo. El tronco está desconectado de su propia sombra. La sombra cambia de dirección. La lógica del paisaje se fractura.",
+      "Es un paisaje que se reconoce."
+    ],
+    referencia_texto: [
+      "Para Tabouret, el paisaje es memoria, la capacidad de un lugar de retener la huella de algo que ocurrió. Figuras y fondos se disuelven mutuamente en sus pinturas, lo emocional contamina lo formal. Lo que emerge es un estado suspendido entre lo real y lo recordado. Grande Calme nombra una calma que es la forma más contenida de la tensión.",
+      "Aquí el secano no es tema pictórico. Es territorio interior. La carrasca, la sierra, la luz naranja son las formas que toma algo que ya estaba antes de mirarlos. A este lugar no se vuelve para describirlo. Se vuelve para reconocer en él algo propio."
+    ],
+    referencia_link: { autor: "Claire Tabouret — Grande Calme", url: "https://clairetabouret.com/files/media_file_510.jpg" }
+  },
+  "antes-de-ver": {
+    bloque: "Bisagra", titulo: "Antes de <em>ver</em>", clase: "reflejo",
+    tecnica: "Óleo sobre lienzo", dimensiones: "116 × 81 cm", ano: "2026",
+    obra: [
+      "Hay un instante, antes de nombrar lo que se ve, en que la mirada todavía no ha decidido. Esta obra vive ahí. No quiere que el espectador llegue a una conclusión. Quiere dejarlo suspendido justo antes de nombrar, en ese umbral donde el ojo insiste para entender pero no resuelve. Ahí, en esa resistencia, nace la presencia.",
+      "¿Es una flor? ¿Es un cuerpo? El lirio es el reflejo. El cuerpo, la sombra."
+    ],
+    proceso: [
+      "La mancha diluye los límites hasta que la forma duda de sí misma. No hay contexto que ayude a situar, no hay escala que oriente. Solo carne sin nombre. La flor se siente como un cuerpo, tensión, pliegues, respiración.",
+      "Si se lo das muy fácil, el espectador no se esfuerza. Solo lee. Si no lo entiende, desconecta. La presencia nace en el umbral entre los dos, cuando tiene que prestar atención, cuando el ojo trabaja sin resolver."
+    ],
+    referencia_texto: [
+      "O'Keeffe pintó las flores grandes para que nadie escapara de verlas. Quería que la gente de la ciudad, que corría sin tiempo para mirar nada, se detuviera. Las pintó tan grandes que obligaban, las acercó hasta eliminar el contexto, sin fondo, sin escala, para que el ojo no tuviera otra opción que entrar.",
+      "Se dio cuenta de que el espectador, al entrar, proyectaba lo suyo. Cada uno veía en la flor su propia historia. O'Keeffe las rechazó todas. Lo que había pintado no era lo que el espectador veía. Había conseguido que miraran, pero no había conseguido que vieran.",
+      "Antes de ver parte de ahí. Pero no rechaza lo que el espectador proyecta. Lo asume desde el principio. La ambigüedad entre la flor y el cuerpo no es un malentendido que corregir. Es la obra. O'Keeffe obligaba a mirar. Esta obra obliga a detenerse antes de ver."
+    ],
+    referencia_link: { autor: "Georgia O'Keeffe — Lirio blanco nº 7", url: "https://www.museothyssen.org/coleccion/artistas/okeeffe-georgia/lirio-blanco-no-7" }
+  },
+  "en-el-umbral": {
+    bloque: "Bloque figura", titulo: "En el <em>umbral</em>", clase: "reflejo",
+    tecnica: "Óleo sobre lienzo", dimensiones: "44,5 × 39 cm", ano: "2023",
+    obra: [
+      "Hay retratos que esperan y retratos que miran.",
+      "La figura está en el borde, una luz, un umbral, un momento, y no ha decidido todavía si cruzarlo.",
+      "Es suspensión, no inmovilidad. La diferencia es que en la inmovilidad nada ocurre, en la suspensión todo está a punto de ocurrir."
+    ],
+    proceso: [
+      "La figura es alguien cercano. Pintarla desde la confianza cambia algo en la manera de mirar, no hay distancia de observador, hay presencia compartida. Eso se nota en cómo la pintura toca el rostro, sin ansiar el parecido, sin huir de él.",
+      "El gesto es fluido entre el fondo y el cuerpo, más detenido en el rostro. Los ojos buscan algo fuera del cuadro, que no se nos revela. Esa dirección crea el espacio imaginario que ella está a punto de habitar.",
+      "En algún punto de la obra, la lógica visual se quiebra. Algo no cuadra, una zona donde la realidad se fractura sin aviso."
+    ],
+    referencia_texto: [
+      "La joven de la perla es un tronie, un estudio de gesto y expresión, sin identidad documentada, sin contexto arquitectónico, sin historia que lo enmarque. Solo una figura, un fondo oscuro, y una mirada que no sabe a quién mira.",
+      "No sabemos quién fue. Ni siquiera queda constancia de que Vermeer lo dijera. Pero no es esa falta de nombre lo que conecta esta obra con la de Vermeer. Es el instante en que alguien se cruza con esa mirada. Un gesto pequeño, que dura lo que dura un parpadeo.",
+      "Aquí la figura sí tiene nombre. Pintarla desde la confianza cambia algo en la mirada, no hay distancia de estudio, hay presencia compartida. Vermeer dejó su mirada sin resolver para siempre. Aquí la mirada se rompe, deja de pertenecer a la realidad. Lo que pase después no lo decide el cuadro. Lo decide quien mira."
+    ],
+    referencia_link: { autor: "Johannes Vermeer — La joven de la perla", url: "https://www.mauritshuis.nl/en/our-collection/artworks/670-girl-with-a-pearl-earring/" }
+  },
+  "mirada-encarnada": {
+    bloque: "Bloque figura", titulo: "Mirada <em>encarnada</em>", clase: "reflejo",
+    tecnica: "Óleo sobre lienzo", dimensiones: "77 × 53 cm", ano: "2026",
+    obra: [
+      "La imagen más reconocible de la historia del arte. Una mirada que lleva cinco siglos mirando a todo el mundo sin que nadie sepa exactamente qué ve.",
+      "Aquí esa mirada se sostiene envuelta en un sueño en el que se ha disuelto."
+    ],
+    proceso: [
+      "Aquí la identidad no es tema. Es punto de partida. La protagonista no la esconde. La lleva puesta, en el paisaje que le envuelve la cabeza, en el vestido que cubre el cuerpo, en las manos que descansan delante.",
+      "La fluidez del paisaje, onírico, glaciar, casi abstracto, envuelve la cabeza como si hablara de sus pensamientos, como si enseñara sus sueños. El escenario exterior se ha disuelto en estado interior.",
+      "El vestido es transparente, moderno, sin vergüenza, con porte. Lleva a Leonardo encima como quien lleva una historia que ya le pertenece.",
+      "Las manos como segundo rostro, en primer plano, con presencia y peso, con la cruz tatuada situándolas sutilmente en el primer término de la escena. Muestran lo que la mirada termina rompiendo."
+    ],
+    referencia_texto: [
+      "La he visto dos veces. Las dos veces fue una decepción. La distancia obligatoria, el bullicio, el amarilleo de los barnices. Es la obra más vista del mundo y una de las que peor se puede contemplar. Para alguien que necesita estar a escasos centímetros, que necesita minutos de silencio delante de una pintura, la Gioconda es una contradicción irresoluble, la obra más admirada y la que menos podemos disfrutar.",
+      "Esa decepción no es un problema. Es el punto de partida.",
+      "Leonardo construyó una presencia que nadie ha podido explicar del todo. La sonrisa, la mirada, el paisaje irreal al fondo. Cinco siglos de miradas encima y la obra sigue sin cerrarse.",
+      "Esta obra no intenta resolver lo que Leonardo dejó abierto. Lo habita desde otro cuerpo, otro tiempo, otra piel. Aquí todo se esfuerza en que la identidad se vea a primera vista. Lo que Leonardo pintó como misterio, aquí se lleva encima como historia propia."
+    ],
+    referencia_link: { autor: "Leonardo da Vinci — Mona Lisa", url: "https://collections.louvre.fr/en/ark:/53355/cl010062370" }
+  },
+  "ardiente-calma": {
+    bloque: "Bloque figura", titulo: "Ardiente <em>calma</em>", clase: "reflejo",
+    tecnica: "Óleo sobre lienzo", dimensiones: "120 × 120 cm", ano: "2024",
+    obra: [
+      "El mar en calma al fondo, el cielo abierto, el color más vibrante del verano inundándolo todo. Había que encontrar a alguien que pudiera sostener esa luz. No cualquiera. Alguien en quien el sol quisiera quedarse.",
+      "El agua se filtra, cubre, avanza sobre el vestido. La calma es un estado atravesado por algo que no pide permiso. La adelfa nos deja en duda. ¿Despertará?"
+    ],
+    proceso: [
+      "El protagonista era el sol. La modelo lo sabía antes de posar, o quizás el sol la eligió a ella. Una sola pincelada larga, dorada, fue el gusto del brochazo en una zona que enmarca. El resto, colores velados y transparentes, aplicados con la misma lógica que los paisajes pero con más delicadeza, para cubrirla.",
+      "El agua entra en la composición como entra la emoción, sin anunciarse, cubriendo lo que encuentra. Pequeñas marcas de spray en las zonas secundarias. El proceso visible donde menos se espera.",
+      "Los ojos cerrados no permitieron romper la mirada. Aquí la ruptura onírica es otra, el agua que no debería estar, el chorreo sobre la calma que no es del todo calma."
+    ],
+    referencia_texto: [
+      "Vi Sol ardiente de junio de Leighton. El sol viste el agua, la figura. Una pose robada de la alegoría de la Noche, de Miguel Ángel. Pero el color es todo lo contrario a la noche. Es el momento más encendido del verano.",
+      "Y en la esquina, la adelfa. Venenosa, bellísima, la misma que él pintó. Unos ojos cerrados que descansan. Y una duda que nunca se va a resolver.",
+      "En su cuadro la adelfa queda discreta, en un rincón. En el mío, el agua ya ha entrado y avanza, moja lo que toca. La calma está siendo atravesada."
+    ],
+    referencia_link: { autor: "Frederic Leighton — Flaming June", url: "https://en.wikipedia.org/wiki/Flaming_June" }
+  },
+  "sin-distancia": {
+    bloque: "Bloque figura", titulo: "Sin <em>distancia</em>", clase: "reflejo",
+    tecnica: "Óleo sobre lienzo", dimensiones: "195 × 186 cm", ano: "2023",
+    obra: [
+      "Cinco figuras se imponen, sin ofrecerse, sin organizarse para nadie.",
+      "El espacio no tiene salida. Las figuras, el fondo, las cortinas, todo se comprime hasta que no hay distancia entre la imagen y quien la mira. La pintura obliga a permanecer."
+    ],
+    proceso: [
+      "La figura se vuelve inestable. La mancha modela cuando interesa y borra cuando estorba. Da volumen, lo retira, arrastra la carne hacia el fondo. La identidad se diluye pictóricamente.",
+      "Las máscaras anónimas dan la contradicción al desnudo que expone. Las dos figuras centrales resisten a las demás absorbidas. Ojos rotos por miradas que confrontan al espectador desde dentro de la desfiguración.",
+      "Y en el suelo, un bodegón que no es clásico. Una pizza, una coca cola, un iPhone. Son restos."
+    ],
+    referencia_texto: [
+      "Picasso quería dinamitar el realismo. Rompió la anatomía, metió las máscaras africanas, yendo al origen dentro de la ruptura. Yo quería alejarme del realismo, pero a mi manera. Chorreras, manchas, fondos inacabados, agujeros donde la pintura sobra.",
+      "De Picasso quería las máscaras, la ruptura, la incomprensión, el desafío de las miradas, el orden dentro de la ruptura del espacio. No quería repetir su fórmula ni su obra. Quería el gesto de romperlo todo, el desgaste de exponer algo al máximo.",
+      "Sus señoritas fueron un escándalo de forma y de color. Yo quería hacerlo desde la presencia, desde el exceso de pintura sobre la figura. Son cuerpos atravesados por la pintura. Erosionados, absorbidos, seguros e inestables."
+    ],
+    referencia_link: { autor: "Pablo Picasso — Las señoritas de Avignon", url: "https://www.moma.org/collection/works/79766" }
+  },
+  "pupila-azul": {
+    bloque: "Bloque figura", titulo: "Pupila <em>azul</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "116 × 89 cm", ano: "2025",
+    obra: [
+      "El cuerpo se ha cerrado sobre sí mismo. La rodilla arriba, los brazos cruzados, la cabeza baja. Todo dice que no quiere estar aquí. Pero los ojos buscan.",
+      "Desde dentro del repliegue, la mano sujeta firme. Desde detrás del brazo, los ojos se abren paso. No es una mirada de rendición. Es una mirada de guardia."
+    ],
+    proceso: [
+      "En casi todo, simpleza. Solo donde era estrictamente necesario, el pincel se detuvo. El cuerpo se construyó desde el gesto, líneas curvas, movimiento circular, márgenes irregulares que activan el espacio vacío entre los pliegues.",
+      "El azul inunda el espacio crema que aún no ha cedido. Pero la síntesis tiene un límite deliberado. Unos pocos centímetros de detalle sostienen toda la obra. Dos gestos detallados concentran la tensión."
+    ],
+    referencia_texto: [
+      "Matisse quedó sin fuerza para pintar tras una operación de cáncer. Empezó a dibujar con tijeras. De ahí nació su búsqueda de síntesis, impuesta por el cuerpo. Un recorte de papel gouaché, formas arrancadas directamente del color con unas tijeras. Matisse esculpía en el color sin pincel, sin dibujo previo.",
+      "Ahí encontré la necesidad de simplificar, la importancia de los espacios negativos, de los cortes, del color. La forma sintetiza. La mancha también, pero de un modo muy distinto. La mancha permite el detalle dentro de la simplificación.",
+      "Trabajar así obliga a redefinir qué significa ver, qué significa representar. Matisse desfigura para revelar. Abstrae para intensificar el color, la pose, el espacio. Hay que obviar lo superfluo y manchar lo esencial. Y eso es lo que dirige la mirada del espectador hacia donde tú quieres que mire. De la síntesis, a la tensión, en un cuerpo que se contiene."
+    ],
+    referencia_link: { autor: "Henri Matisse — Blue Nude II", url: "https://www.centrepompidou.fr/en/pompidou-plus/magazine/article/focus-on-blue-nude-ii-nu-bleu-ii-by-henri-matisse" }
+  },
+  "no-caigas": {
+    bloque: "Bloque figura", titulo: "No <em>caigas</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "180 × 230 cm", ano: "2025",
+    obra: [
+      "Vulnerable sobre una bestia que está a su vez encima de otra aún más grande y poderosa. ¿Rendido? ¿Rugiendo? ¿Batallando?"
+    ],
+    proceso: [
+      "Es un formato al que nunca me había enfrentado. Aquí expongo más la mancha, soy más libre. Pinceles grandes, muy cargados para una textura que costaba mover. Color manchado, sucio, hasta dentro de los blancos. Simetría y equilibrio que en mi cabeza no podía romperse.",
+      "El agua en calma asienta. La noche en calma enmarca. La batalla arde al viento y convierte el color en símbolo, que brota del movimiento como si siempre hubiera estado ahí.",
+      "Tensión, pero en equilibrio. El caballo es el punto de luz que sobrevive a la oscuridad. El dragón cae desde las sombras hacia el amanecer."
+    ],
+    referencia_texto: [
+      "Un mito aragonés, una imagen endiosada a la que se le queda pequeño hasta este formato enorme. Rubens pintó la escena como una explosión que estalla hacia fuera.",
+      "Aquí convierto la batalla en danza. Un hombre vulnerable, con los colores a su espalda. El caballo domina al dragón como un rejoneador afronta el baile delante de un toro.",
+      "Luz, amanecer, el día entrando en la noche. Los opuestos danzan y sostienen la obra en un baile circular. Sin sangre. Sin final."
+    ],
+    referencia_link: { autor: "Peter Paul Rubens — San Jorge y el dragón", url: "https://www.museodelprado.es/coleccion/obra-de-arte/lucha-de-san-jorge-y-el-dragon/dea0a4cc-110e-425e-a8e2-bdb37444d26c" }
+  },
+  "antes-de-reconocer": {
+    bloque: "Cierre", titulo: "Antes de <em>reconocer</em>", clase: "sombra",
+    tecnica: "Óleo sobre lienzo", dimensiones: "97 × 162 cm", ano: "2026",
+    obra: [
+      "No sé si ves lo mismo que yo. Nunca lo sabré del todo. Aquí no me ves a mí. Ves mi imagen. Ves mi sombra. Ella te pone donde estoy yo. Me ves como yo me pinto. Con tus ojos, no los míos. Algo tuyo y algo mío, mezclado."
+    ],
+    proceso: [
+      "Empecé por el cielo. Un color frío, sin sol, casi nublado, para que la cabeza quedara suspendida en algo que no abriga. El cuerpo lo construí con la tierra de aquí y con la gente que ha sido casa. Ocres, tonos de piel mezclados con el mismo color del suelo, sin línea que separe dónde acaba uno y empieza el otro.",
+      "El agua brotó de la pared, abriendo la grieta, rompiendo el cuerpo. Al llegar al suelo ya no era grieta, era raíz. De esa misma agua nacieron las flores, silvestres, rodeadas de la maleza que crece en cualquier cuneta. Hasta entonces no había entendido de dónde salía el agua que ya corría por el resto de la sala. Salía de aquí. Siempre había salido de aquí.",
+      "A su lado, ahí, quieta, apareció mi sombra. Cae hacia delante, hacia quien mira. Hasta ese momento no había entendido que la cabeza y el cuerpo no están hechos de lo mismo. Uno se queda arriba, donde el aire no pesa. El otro es territorio y es gente, algo que deja tierra en la mano."
+    ],
+    referencia_texto: [
+      "Kahlo pintó La columna rota en 1944, poco después de una cirugía de columna. Se representó de pie, sujeta por un corsé ortopédico, la piel cubierta de clavos, una columna jónica partida donde debería estar su propia columna vertebral. El corsé es lo único que impide que su cuerpo se caiga.",
+      "No fui a buscar el dolor. Fui a buscar lo que sostiene a alguien por dentro. Aquí no hay corsé. No hay clavos. Lo que queda es la pregunta. Ella ya se dio su propia respuesta, y la mía no está en el cuerpo.",
+      "Está en la pared que me pinta, la misma de la que brota el agua, la misma que abre la grieta. De ahí nace una raíz. No una herida. La misma agua que ya ha mojado otras paredes de esta sala antes de llegar a esta."
+    ],
+    referencia_link: { autor: "Frida Kahlo — La columna rota", url: "https://casademexico.es/frida-kahlo-alas-para-volar-la-columna-rota" }
+  }
+};
 
+// ⚠️ Este texto es el "Epígrafe de apertura" del maestro final, que el
+// propio documento marca como exclusivo de la portada interior del
+// catálogo impreso, distinto del vinilo de apertura de sala/web. Vivo
+// pidió explícitamente (16 agosto 2026) usar este texto también aquí,
+// en la portada de la web, sustituyendo al vinilo de apertura original.
+const VINILO_APERTURA = "Estos paisajes son de aquí. Estas personas son cercanas. Estos momentos son míos. Y, sin embargo, algo en ellos se desplaza. Unas veces me reconozco. Otras, no.";
+
+const VINILO_CIERRE = "Has recorrido paisajes que no existen y cuerpos que no se dejan nombrar. Cada mirada que se detiene mantiene esto vivo.";
+
+// EPÍLOGO: cierre emocional del recorrido, después del vinilo de cierre.
+// Texto verificado contra el catálogo A5 real impreso (páginas 76-77 de
+// RyS_cata_logo_A5.pdf). El que había antes era de otra versión, un
+// texto distinto que no corresponde a esta fuente. En el catálogo el
+// orden es: epílogo, luego el vinilo de cierre, luego la firma. Aquí
+// mantengo el epílogo como pantalla propia, después del vinilo de
+// cierre en la SEQUENCE — pendiente que Vivo confirme si prefiere
+// fusionarlos en una sola pantalla o el orden exacto.
+const EPILOGO = [
+  "Nunca sabremos si las emociones son comparables. Si el dolor, la risa, la tristeza, los demás las sienten como las sentimos nosotros. Cada uno solo puede reflejar sus emociones en las palabras y miradas de los otros.",
+  "Por eso pinto. No para que sientas lo que yo siento. Para que encuentres lo que ya llevabas dentro.",
+  "Es eso lo que me pasó cuando fui a buscar a estos pintores. Fui a entenderlos. Y me encontré a través de su pintura.",
+  "Cada uno encuentra sus propios sentimientos a través de un lenguaje que solo le pertenece. Yo pongo el mío. Tú pones el tuyo. Y en ese espacio entre los dos, ocurre algo que ninguno de los dos podría haber creado solo. Lo que verás no soy yo, ni eres tú."
+];
+const EPILOGO_FINAL = "Es mi sombra en el reflejo de tus sentimientos.";
+
+
+
+const TEXTO_ARTISTA = [
+  "Esta exposición nace de una experiencia en el Museo del Prado. Escuché a un niño decirle a su padre, «Papá, vamos a ver a Goya». Lo sentí como quien quiere ver a alguien cercano. Alguien que está aquí.",
+  "Y ya lo había vivido antes. Algo en esos pintores tiraba hacia mí sin que supiera por qué. Ahora sé que no era aprendizaje. Era reconocimiento. Algo en ellos ya estaba en mí antes de encontrarlos.",
+  "Por eso pinto con ellos. Pinto con gesto fluido, manchado y emocional. No pretendo hacer versiones ni homenajes. Son el registro de lo que ocurrió cuando esa obra pasó por mí."
+];
+
+const TEXTO_CURATORIAL = [
+  "Reflejos y sombras es la primera exposición individual de Javier Sanagustín Moreu. Catorce obras que nacen de un acercamiento a la historia de la pintura desde la necesidad de reconocerse en lo que otros ya habían pintado.",
+  "Lo que salió reconocible es un reflejo. Lo que salió transformado, desplazado, es una sombra."
+];
+
+// Vinilos de bloque, intercalados en el recorrido según
+// RyS_vinilos_sala_definitivo.docx (versión definitiva junio 2026,
+// bloque paisaje actualizado agosto 2026 para no duplicar el arranque
+// del vinilo de apertura).
+const VINILOS = {
+  "texto-artista-tabique": {
+    label: "Texto de artista",
+    texto: TEXTO_ARTISTA
+  },
+  "vinilo-paisaje": {
+    label: "Antes del bloque paisaje",
+    texto: ["Este territorio no se describe ni se documenta. Se queda dentro cuando lo has vivido de verdad. Cada obra es una invitación a verlo como yo lo veo. No desde fuera, sino desde dentro."]
+  },
+  "vinilo-bisagra": {
+    label: "Bisagra",
+    texto: ["Algo cambia aquí.", "Tómate un momento antes de seguir."]
+  },
+  "vinilo-figura": {
+    label: "Bloque figura",
+    texto: ["La pintura no describe estos cuerpos. Los envuelve. Fluye desde el fondo hasta la piel, disuelve los límites, conecta lo que rodea con lo que habita. Son personas cercanas dentro de imágenes antiguas, retratadas desde el conocimiento y la confianza. Acércate a los ojos. Ahí la realidad se quiebra justo donde más se sostiene."]
+  },
+  "vinilo-cierre-recorrido": {
+    label: "Cierre",
+    texto: [VINILO_CIERRE]
+  }
+};
+
+// Secuencia real de recorrido, obras + vinilos intercalados, para que
+// las flechas prev/next reproduzcan el orden físico de la sala.
+// Los QR de obra siguen apuntando directo a su obra (ver ORDEN arriba);
+// los vinilos NUNCA llevan QR propio, solo se llega a ellos con las
+// flechas desde el principio del recorrido.
+const SEQUENCE = [
+  { type: "vinilo", id: "texto-artista-tabique" },
+  { type: "obra", id: "antes-de-encontrar" },
+  { type: "vinilo", id: "vinilo-paisaje" },
+  { type: "obra", id: "luz-retenida" },
+  { type: "obra", id: "hacia-arriba" },
+  { type: "obra", id: "cerro-encendido" },
+  { type: "obra", id: "entre-fragmentos" },
+  { type: "obra", id: "llanura-interior" },
+  { type: "vinilo", id: "vinilo-bisagra" },
+  { type: "obra", id: "antes-de-ver" },
+  { type: "vinilo", id: "vinilo-figura" },
+  { type: "obra", id: "en-el-umbral" },
+  { type: "obra", id: "mirada-encarnada" },
+  { type: "obra", id: "ardiente-calma" },
+  { type: "obra", id: "sin-distancia" },
+  { type: "obra", id: "pupila-azul" },
+  { type: "obra", id: "no-caigas" },
+  { type: "obra", id: "antes-de-reconocer" },
+  { type: "vinilo", id: "vinilo-cierre-recorrido" },
+  { type: "epilogo", id: "epilogo" }
+];
+// pieza-umbral-revelada YA NO está en la SEQUENCE a propósito: no debe
+// alcanzarse pulsando "siguiente" ni aparecer en el recorrido normal.
+// Solo se llega escribiendo o escaneando la URL con #pieza-umbral-revelada
+// (el QR físico junto a la pieza en sala). Ver getRoute() más abajo.
+
+// "La obra" es el poema propio de Vivo sobre la pieza, respetado casi
+// verbatim, en estrofas. "El proceso" es el texto en prosa sobre el
+// soporte real y el gesto de repintarlo.
+const PORTADA_OBRA = [
+  ["No cae de donde nace.", "No es la primera lágrima."],
+  ["Ojo flor.", "Llora.", "Síntoma vivo."],
+  ["¿Tristeza?", "¿Alegría?", "Lágrimas al fin y al cabo."],
+  ["Ese mojar, cubrir y enrojecer.", "Colorear el blanco ojo, rojo, y caer.", "Humedecer y dejar un rastro", "que a su vez atrae."],
+  ["Aparecen sombras de mariposas,", "de abejas.", "Síntoma que no distingue", "salado lagrimal", "de dulce néctar.", "Lágrimas al fin y al cabo."],
+  ["Síntoma del ojo,", "o de la flor."]
+];
+
+const PORTADA_PROCESO = [
+  "Debajo de este ojo hay una Virgen con el Niño. Un óvalo devocional, muy antiguo, comprado en Cáritas por unos pocos euros, pintado por alguien cuyo nombre nadie guardó.",
+  "La tapé entera. El marco dorado lo dejé como estaba, con su pátina, sus golpes, los años que ya llevaba antes de llegar a mis manos. Solo cambié lo de dentro.",
+  "Necesitaba un soporte que ya hubiera sostenido algo antes que yo. Que ya hubiera servido de refugio a alguien. Quería empezar sobre algo que ya supiera sostener peso.",
+  "No he puesto esto en ningún otro sitio. No hay cartela junto al caballete, no hay texto en la pared. Si has llegado hasta aquí es porque le has dado la vuelta al marco, o has buscado algo que nadie te dijo que buscaras. Eso ya dice algo de cómo miras.",
+  "No sé si lo que está debajo importa más que lo que se ve encima. Puede que la Virgen siga ahí, respirando bajo las capas de óleo, sosteniendo esto sin que nadie lo sepa. Puede que no quede nada de ella. No lo he comprobado. No pienso hacerlo."
+];
+
+// BIOGRAFÍA: pantalla propia, fuera del recorrido de obras/vinilos.
+// Accesible desde un enlace discreto al final de la portada.
+// "sus padres" (plural), por instrucción directa de Vivo (16 agosto
+// 2026), aunque el catálogo A5 real impreso dice "su padre" (singular).
+// Si el catálogo no se ha regenerado todavía, esa página también habría
+// que corregirla para que coincida con la web.
+const BIOGRAFIA = [
+  "Javier Sanagustín Moreu nace en Huesca en 1995. Crece en la «Escuela de Dibujo y Pintura Sanagustín», fundada por sus padres, y empieza a enseñar allí a los 16 años. Dirige la escuela desde 2019.",
+  "Su formación es ajena a la academia. Su pintura se forma en el aula, dando clase, mirando trabajar a sus alumnos y a los pintores que ellos mismos le señalan.",
+  "Ha participado en diversas exposiciones colectivas en distintos espacios artísticos.",
+  "Su obra evoluciona del realismo hacia un lenguaje gestual, donde la mancha y el agua sostienen la emoción de cada cuadro.",
+  "«Reflejos y Sombras» es su primera exposición individual."
+];
+
+/* ============ IMÁGENES ============
+   Coloca los archivos con estos nombres en una carpeta /img junto a este
+   archivo y aparecerán automáticamente. Mientras no existan, se ve el
+   hueco vacío con el nombre de archivo esperado. */
+const IMG_EXTS = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'];
+function imgSrcAt(id, i) { return `img/${id}.${IMG_EXTS[i]}`; }
+// Compatibilidad con el resto del código: primer intento por defecto.
+function imgPath(id) { return imgSrcAt(id, 0); }
+const PORTADA_IMG = imgSrcAt('portada', 0);
+
+// Si una imagen no carga, prueba la siguiente extensión de la lista
+// (jpg, JPG, jpeg, JPEG, png, PNG) antes de rendirse. Así da igual en
+// qué formato subas cada foto, mientras el NOMBRE (sin extensión) sea
+// el correcto.
 function handleImgError(img, phId) {
-  try {
-    const currentIdx = parseInt(img.dataset.extIdx ?? img.getAttribute('data-ext-idx') ?? '0', 10);
-    const i = currentIdx + 1;
-    if (i < IMG_EXTS.length) {
-      img.dataset.extIdx = String(i);
-      const imgid = img.dataset.imgid ?? img.getAttribute('data-imgid') ?? '';
-      if (imgid) {
-        img.src = imgSrcAt(imgid, i);
-      } else {
-        console.warn('handleImgError: no data-imgid on element, cannot try next extension');
-        img.style.display = 'none';
-        if (phId) { const ph = document.getElementById(phId); if (ph) ph.style.display = 'flex'; }
-      }
-    } else {
-      img.style.display = 'none';
-      if (phId) { const ph = document.getElementById(phId); if (ph) ph.style.display = 'flex'; }
-    }
-  } catch (e) {
-    console.error('handleImgError failed', e);
+  const i = (parseInt(img.dataset.extIdx || '0', 10)) + 1;
+  if (i < IMG_EXTS.length) {
+    img.dataset.extIdx = String(i);
+    img.src = imgSrcAt(img.dataset.imgid, i);
+  } else if (phId) {
+    img.style.display = 'none';
+    const ph = document.getElementById(phId);
+    if (ph) ph.style.display = 'flex';
   }
 }
 function handleObraImgLoad(img, id) {
-  try {
-    img.style.display = 'block';
-    if (img.nextElementSibling) img.nextElementSibling.style.display = 'none';
-    const hires = document.getElementById('hires-' + id);
-    if (hires) { hires.href = img.src; hires.style.display = 'inline-block'; }
-  } catch (e) {
-    console.error('handleObraImgLoad failed', e);
-  }
+  img.style.display = 'block';
+  img.nextElementSibling.style.display = 'none';
+  const hires = document.getElementById('hires-' + id);
+  if (hires) { hires.href = img.src; hires.style.display = 'inline-block'; }
 }
 
-function getRoute(){ const hash = location.hash.replace('#',''); if(!hash||hash==='/') return {type:'home'}; if(OBRAS[hash]) return {type:'obra', id:hash}; if(VINILOS[hash]) return {type:'vinilo', id:hash}; if(hash==='pieza-umbral-revelada') return {type:'final', id:hash}; if(hash==='biografia') return {type:'biografia'}; if(hash==='epilogo') return {type:'epilogo'}; if(hash==='catalogo') return {type:'catalogo'}; return {type:'home'} }
-function seqNeighbors(id){ const idx = SEQUENCE.findIndex(item => item.id===id); if(idx===-1) return {prev:null,next:null}; return { prev: idx>0 ? SEQUENCE[idx-1] : null, next: idx < SEQUENCE.length-1 ? SEQUENCE[idx+1] : null } }
+/* ============ ROUTING Y RENDER ============ */
 
-function setTheme(t){ document.documentElement.setAttribute('data-theme', t); localStorage.setItem('rys-theme', t) }
-function initTheme(){ const saved = localStorage.getItem('rys-theme'); if(saved){ setTheme(saved); return } const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; setTheme(prefersDark ? 'dark' : 'light') }
-function toggleTheme(){ const cur = document.documentElement.getAttribute('data-theme'); setTheme(cur==='dark' ? 'light' : 'dark') }
+function getRoute() {
+  const hash = location.hash.replace('#', '');
+  if (!hash || hash === '/') return { type: 'home' };
+  if (OBRAS[hash]) return { type: 'obra', id: hash };
+  if (VINILOS[hash]) return { type: 'vinilo', id: hash };
+  if (hash === 'pieza-umbral-revelada') return { type: 'final', id: hash };
+  if (hash === 'biografia') return { type: 'biografia' };
+  if (hash === 'epilogo') return { type: 'epilogo' };
+  if (hash === 'catalogo') return { type: 'catalogo' };
+  return { type: 'home' };
+}
 
-function header(){ return `
-    <header class="top">
-      <div>
-        <div class="brand" onclick="location.hash=''">
-          <span>Reflejos y</span><span>sombras</span>
-        </div>
-        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+// Busca el vecino anterior/siguiente en la secuencia real de recorrido,
+// sea obra o vinilo, a partir de cualquier id de la secuencia.
+function seqNeighbors(id) {
+  const idx = SEQUENCE.findIndex(item => item.id === id);
+  if (idx === -1) return { prev: null, next: null };
+  return {
+    prev: idx > 0 ? SEQUENCE[idx - 1] : null,
+    next: idx < SEQUENCE.length - 1 ? SEQUENCE[idx + 1] : null
+  };
+}
+
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('rys-theme', t);
+}
+function initTheme() {
+  const saved = localStorage.getItem('rys-theme');
+  if (saved) { setTheme(saved); return; }
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(prefersDark ? 'dark' : 'light');
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+}
+
+function header(showBackHome) {
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''">
+        <span>Reflejos y</span><span>sombras</span>
       </div>
-      <div class="expo-meta">Palacio de Villahermosa · Huesca · 2026</div>
-    </header>` }
-function footer(){ return `
-    <footer class="bottom">
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+    <div class="expo-meta">Palacio de Villahermosa · Huesca · 2026</div>
+  </header>`;
+}
+
+function footer() {
+  return `
+  <footer class="bottom">
+    <span class="artist-sig">Javier Sanagustín Moreu</span>
+    <span class="expo-dates">Huesca · 8 oct – 11 nov 2026</span>
+  </footer>`;
+}
+
+// Cuando el catálogo esté publicado en Amazon, cambia SOLO esta línea
+// por el enlace real (algo como "https://www.amazon.es/dp/XXXXXXXXXX").
+// Mientras tanto el botón queda visible pero no lleva a ningún sitio.
+const CATALOG_URL = null; // ej: "https://www.amazon.es/dp/XXXXXXXXXX"
+
+function catalogBtn() {
+  const url = CATALOG_URL || '#';
+  const disabledAttr = CATALOG_URL ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo todavía no está disponible para comprar.\');"';
+  return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo — 20€
+    <small>Comprarlo es apoyar directamente este proyecto.</small>
+  </a>`;
+}
+
+function renderHome() {
+  const worklistHtml = ORDEN.map((id, i) => {
+    const o = OBRAS[id];
+    const dotHtml = o.clase ? `<span class="dot ${o.clase}"></span>` : '';
+    return `<li><a href="#${id}">
+      <span class="num">${String(i+1).padStart(2,'0')}</span>
+      <span class="name">${o.titulo.replace(/<\/?em>/g,'')}</span>
+      ${dotHtml}
+    </a></li>`;
+  }).join('');
+
+  return `
+  ${header()}
+  <main>
+    <img class="home-portada" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this, 'portada-ph')">
+    <div id="portada-ph" class="obra-image" style="display:none; aspect-ratio:3/4; margin-bottom:40px;">
+      <span class="placeholder">img/portada.jpg</span>
+    </div>
+
+    <a href="#${SEQUENCE[0].id}" style="display:block; text-align:center; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-soft); border:1px solid var(--line); padding:12px; margin-bottom:36px;">Comenzar recorrido →</a>
+
+    <div class="vinilo-wrap">
+      <p class="vinilo">${VINILO_APERTURA}</p>
+    </div>
+
+    <div class="accordion home-accordion">
+      <div class="acc-item" data-acc="curatorial">
+        <button class="acc-head" onclick="toggleAcc(this)"><span>Sobre la exposición</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-body-inner">${TEXTO_CURATORIAL.map(p=>`<p>${p}</p>`).join('')}</div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="dot reflejo"></span>Reflejo</span>
+      <span class="legend-item"><span class="dot sombra"></span>Sombra</span>
+    </div>
+
+    <ul class="worklist">${worklistHtml}</ul>
+
+    <a class="catalog-btn" href="#biografia" style="margin-top:40px;">Biografía
+      <small>Sobre Javier Sanagustín Moreu y la escuela.</small>
+    </a>
+
+    <a class="catalog-btn" href="#catalogo" style="margin-top:14px;">Catálogo de obra
+      <small>Técnica, medidas y año de las catorce obras.</small>
+    </a>
+
+    ${catalogBtn()}
+  </main>
+  ${footer()}
+  `;
+}
+
+// PRECIOS DE VENTA — confirmados por Vivo el 16 de agosto de 2026.
+// "No caigas" está cedida a la exposición: sin precio, no disponible.
+const PRECIOS_OBRA = {
+  "antes-de-encontrar": { precio: "1.200 €", disponible: true },
+  "luz-retenida": { precio: "1.600 €", disponible: true },
+  "hacia-arriba": { precio: "700 €", disponible: true },
+  "cerro-encendido": { precio: "900 €", disponible: true },
+  "entre-fragmentos": { precio: "6.900 €", disponible: true },
+  "llanura-interior": { precio: "2.300 €", disponible: true },
+  "antes-de-ver": { precio: "1.200 €", disponible: true },
+  "en-el-umbral": { precio: "500 €", disponible: true },
+  "mirada-encarnada": { precio: "800 €", disponible: true },
+  "ardiente-calma": { precio: "1.700 €", disponible: true },
+  "sin-distancia": { precio: "4.000 €", disponible: true },
+  "pupila-azul": { precio: "1.200 €", disponible: true },
+  "no-caigas": { precio: null, disponible: false },
+  "antes-de-reconocer": { precio: "1.800 €", disponible: true }
+};
+
+function adquirirObraAcc(id) {
+  const info = PRECIOS_OBRA[id];
+  let bodyHtml;
+  if (!info || info.precio == null) {
+    bodyHtml = `
+      <p style="color:var(--fg-faint); font-style:italic;">Cedida a la exposición. No disponible para la venta.</p>`;
+  } else if (info.disponible) {
+    bodyHtml = `
+      <p style="font-family:'DM Sans',sans-serif; font-size:18px; letter-spacing:.02em; margin-bottom:14px;">${info.precio}</p>
+      <a href="mailto:javiersanagustinmoreu@gmail.com?subject=${encodeURIComponent('Interesado/a en ' + OBRAS[id].titulo.replace(/<\/?em>/g,''))}" style="font-family:'DM Sans',sans-serif; font-size:11.5px; letter-spacing:.05em; color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent);">Escribir para consultar disponibilidad ↗</a>`;
+  } else {
+    bodyHtml = `
+      <p style="font-family:'DM Sans',sans-serif; font-size:18px; letter-spacing:.02em; margin-bottom:6px;">${info.precio}</p>
+      <p style="color:var(--fg-faint); font-style:italic;">No disponible actualmente.</p>`;
+  }
+  return `
+  <div class="acc-item" data-acc="adquirir-${id}">
+    <button class="acc-head" onclick="toggleAcc(this)"><span>Adquirir obra</span><span class="acc-plus">+</span></button>
+    <div class="acc-body"><div class="acc-body-inner">${bodyHtml}</div></div>
+  </div>`;
+}
+
+function renderObra(id) {
+  const o = OBRAS[id];
+  const idx = ORDEN.indexOf(id); // posición entre las 14 obras, solo para el contador X/14
+  const { prev, next } = seqNeighbors(id); // vecino real en el recorrido, obra o vinilo
+
+  const refLinkHtml = o.referencia_link
+    ? `<a class="acc-ref-link" href="${o.referencia_link.url}" target="_blank" rel="noopener">${o.referencia_link.autor} ↗</a>`
+    : '';
+
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+    <div class="navrow">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
+  </header>
+  <main>
+    <div class="block-row">
+      <span class="label">${o.bloque}</span>
+      <span class="label">${String(idx+1).padStart(2,'0')} / ${ORDEN.length}</span>
+    </div>
+
+    <img class="obra-frame" style="display:none;" src="${imgSrcAt(id, 0)}" data-imgid="${id}" data-ext-idx="0" onload="handleObraImgLoad(this, '${id}')" onerror="handleImgError(this)" alt="">
+    <div class="obra-image">
+      <span class="placeholder">img/${id}.[jpg|png]</span>
+    </div>
+
+    <div class="tech-row"><span>${o.tecnica}</span><span>${o.dimensiones}</span></div>
+
+    <h1 class="titulo">${o.titulo}</h1>
+
+    <div class="cuerpo">${o.obra.map(p=>`<p>${p}</p>`).join('')}</div>
+
+    <div class="accordion">
+      <div class="acc-item" data-acc="proceso-${id}">
+        <button class="acc-head" onclick="toggleAcc(this)"><span>El proceso</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-body-inner">${o.proceso.map(p=>`<p>${p}</p>`).join('')}</div></div>
+      </div>
+      <div class="acc-item" data-acc="referencia-${id}">
+        <button class="acc-head" onclick="toggleAcc(this)">
+          <span>La referencia</span>
+          <span class="sub">${o.referencia_link ? o.referencia_link.autor : ''}</span>
+          <span class="acc-plus">+</span>
+        </button>
+        <div class="acc-body"><div class="acc-body-inner">${o.referencia_texto.map(p=>`<p>${p}</p>`).join('')}${refLinkHtml}</div></div>
+      </div>
+      ${adquirirObraAcc(id)}
+    </div>
+    <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Pulsa aquí para descargar la imagen en alta resolución ↓</a>
+    ${catalogBtn()}
+  </main>
+  ${footer()}
+  `;
+}
+
+function renderVinilo(id) {
+  const v = VINILOS[id];
+  const { prev, next } = seqNeighbors(id);
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+    <div class="navrow">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
+  </header>
+  <main>
+    <div class="vinilo-screen">
+      <span class="label">${v.label}</span>
+      ${v.texto.map(p=>`<p>${p}</p>`).join('')}
+    </div>
+    ${catalogBtn()}
+  </main>
+  ${footer()}
+  `;
+}
+
+function renderFinal(id) {
+  const { prev, next } = seqNeighbors(id);
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+    <div class="navrow">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
+  </header>
+  <main>
+    <div class="portada-revisit" style="border-top:none; padding-top:10px;">
+      <img class="home-portada small" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this)">
+      <button class="portada-revisit-toggle" onclick="togglePortada()">¿Qué hay debajo de esta imagen?</button>
+      <div class="portada-hidden-text" id="portada-hidden">
+        <div class="inner">
+          <p class="label" style="margin-bottom:14px;">La obra</p>
+          ${PORTADA_OBRA.map(estrofa => `<p style="margin-bottom:20px;">${estrofa.join('<br>')}</p>`).join('')}
+          <p class="label" style="margin:30px 0 14px;">El proceso</p>
+          ${PORTADA_PROCESO.map(p=>`<p>${p}</p>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${catalogBtn()}
+  </main>
+  ${footer()}
+  `;
+}
+
+function toggleAcc(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+function togglePortada() {
+  document.getElementById('portada-hidden').classList.toggle('open');
+}
+
+function renderBiografia() {
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+  </header>
+  <main>
+    <span class="label">Biografía</span>
+    <h1 class="titulo" style="font-size:34px; margin-top:14px;">Javier Sanagustín Moreu</h1>
+    <img class="obra-frame" style="display:none; width:150px; max-width:45%; margin:22px 0 26px;" src="${imgSrcAt('biografia', 0)}" data-imgid="biografia" data-ext-idx="0" onload="handleObraImgLoad(this, 'biografia')" onerror="handleImgError(this)" alt="Javier Sanagustín Moreu">
+    <div class="obra-image" style="width:150px; max-width:45%; aspect-ratio:3/4; margin:22px 0 26px;">
+      <span class="placeholder" style="font-size:9px; text-align:center; padding:6px;">img/biografia.[jpg|png]</span>
+    </div>
+    <div class="cuerpo">${BIOGRAFIA.map(p=>`<p>${p}</p>`).join('')}</div>
+    <a href="#" style="display:inline-block; margin-top:20px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-soft); border-bottom:1px solid var(--line);">← Volver a la portada</a>
+  </main>
+  ${footer()}
+  `;
+}
+
+function renderEpilogo() {
+  const { prev, next } = seqNeighbors('epilogo');
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+    <div class="navrow">
+      <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
+      <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
+    </div>
+  </header>
+  <main>
+    <span class="label">Epílogo</span>
+    <div class="cuerpo" style="margin-top:20px; font-style:italic;">
+      ${EPILOGO.map(p=>`<p>${p}</p>`).join('')}
+      <p style="margin-top:26px; font-size:22px;">${EPILOGO_FINAL}</p>
+    </div>
+    <div class="portada-revisit" style="border-top:none; padding-top:30px;">
       <span class="artist-sig">Javier Sanagustín Moreu</span>
-      <span class="expo-dates">Huesca · 8 oct – 11 nov 2026</span>
-    </footer>` }
-const CATALOG_URL = null;
-function catalogBtn(){ const url = CATALOG_URL || '#'; const disabledAttr = CATALOG_URL ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo todavía no está disponible para comprar.\');"'; return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo<small>Comprarlo es apoyar directamente este proyecto.</small></a>` }
+    </div>
+  </main>
+  ${footer()}
+  `;
+}
 
-function renderHome(){
-const worklistHtml = ORDEN.map((id,i)=>{ const o = OBRAS[id]; const dotHtml = o.clase ? `<span class="dot ${o.clase}"></span>` : ''; return `<li><a href="#${id}"><span class="num">${String(i+1).padStart(2,'0')}</span><span class="name">${o.titulo.replace(/<\/?em>/g,'')}</span>${dotHtml}</a></li>` }).join('');
-return `
-    ${header()}
-    <main>
-      <img class="home-portada" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this, 'portada-ph')">
-      <div id="portada-ph" class="obra-image" style="display:none; aspect-ratio:3/4; margin-bottom:40px;">
-        <span class="placeholder">img/portada.jpg</span>
-      </div>
-      <div class="vinilo-wrap">
-        <p class="vinilo">${VINILO_APERTURA}</p>
-      </div>
-      <div class="legend">
-        <span class="legend-item"><span class="dot reflejo"></span>Reflejo</span>
-        <span class="legend-item"><span class="dot sombra"></span>Sombra</span>
-      </div>
-      <ul class="worklist">${worklistHtml}</ul>
-      <a class="catalog-btn" href="#biografia" style="margin-top:40px;">Biografía<small>Sobre Javier Sanagustín Moreu y la escuela.</small></a>
-      <a class="catalog-btn" href="#catalogo" style="margin-top:14px;">Catálogo de obra<small>Técnica, medidas y año de las catorce obras.</small></a>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
+function renderCatalogo() {
+  const rows = ORDEN.map((id, i) => {
+    const o = OBRAS[id];
+    const dotHtml = o.clase ? `<span class="dot ${o.clase}"></span>` : '';
+    return `
+    <tr style="border-bottom:1px solid var(--line);">
+      <td style="padding:12px 8px; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--fg-faint); vertical-align:top;">${String(i+1).padStart(2,'0')}</td>
+      <td style="padding:12px 8px; font-style:italic; vertical-align:top;"><a href="#${id}" style="color:var(--fg); text-decoration:none;">${o.titulo.replace(/<\/?em>/g,'')}</a></td>
+      <td style="padding:12px 8px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--fg-soft); vertical-align:top;">${o.tecnica}</td>
+      <td style="padding:12px 8px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--fg-soft); vertical-align:top; white-space:nowrap;">${o.dimensiones}</td>
+      <td style="padding:12px 8px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--fg-soft); vertical-align:top;">${o.ano || ''}</td>
+      <td style="padding:12px 8px; vertical-align:top;">${dotHtml}</td>
+    </tr>`;
+  }).join('');
 
-function adquirirObraAcc(id){ const info = { precio:null, disponible:false }; let bodyHtml = `<p style="color:var(--fg-faint); font-style:italic;">Información de venta no disponible.</p>`;
-return `
-    <div class="acc-item" data-acc="adquirir-${id}">
-      <button class="acc-head" onclick="toggleAcc(this)"><span>Adquirir obra</span><span class="acc-plus">+</span></button>
-      <div class="acc-body"><div class="acc-body-inner">${bodyHtml}</div></div>
-    </div>` }
+  return `
+  <header class="top">
+    <div>
+      <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
+    </div>
+  </header>
+  <main>
+    <span class="label">Catálogo de obra</span>
+    <h1 class="titulo" style="font-size:32px; margin-top:14px; margin-bottom:26px;">Las catorce obras</h1>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:15px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);">
+            <th style="text-align:left; padding:8px; font-family:'DM Sans',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-faint);"></th>
+            <th style="text-align:left; padding:8px; font-family:'DM Sans',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-faint);">Título</th>
+            <th style="text-align:left; padding:8px; font-family:'DM Sans',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-faint);">Técnica</th>
+            <th style="text-align:left; padding:8px; font-family:'DM Sans',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-faint);">Medidas</th>
+            <th style="text-align:left; padding:8px; font-family:'DM Sans',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-faint);">Año</th>
+            <th style="text-align:left; padding:8px;"></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <a href="#" style="display:inline-block; margin-top:30px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-soft); border-bottom:1px solid var(--line);">← Volver a la portada</a>
+  </main>
+  ${footer()}
+  `;
+}
 
-function renderObra(id){ const o = OBRAS[id]; const idx = ORDEN.indexOf(id); const {prev,next} = seqNeighbors(id);
-const refLinkHtml = o.referencia_link ? `<a class="acc-ref-link" href="${o.referencia_link.url}" target="_blank" rel="noopener">${o.referencia_link.autor} ↗</a>` : '';
-return `
-    <header class="top">
-      <div>
-        <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
-        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
-      </div>
-      <div class="navrow">
-        <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
-        <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
-      </div>
-    </header>
-    <main>
-      <div class="block-row">
-        <span class="label">${o.bloque}</span>
-        <span class="label">${String(idx+1).padStart(2,'0')} / ${ORDEN.length}</span>
-      </div>
-      <img class="obra-frame" style="display:none;" src="${imgSrcAt(id,0)}" data-imgid="${id}" data-ext-idx="0" onload="handleObraImgLoad(this, '${id}')" onerror="handleImgError(this,'obra-ph')" alt="">
-      <div id="obra-ph" class="obra-image">
-        <span class="placeholder">img/${id}.[jpg|png]</span>
-      </div>
-      <div class="tech-row"><span>${o.tecnica}</span><span>${o.dimensiones}</span></div>
-      <h1 class="titulo">${o.titulo}</h1>
-      <div class="cuerpo">${o.obra.map(p=>`<p>${p}</p>`).join('')}</div>
-      <div class="accordion">
-        <div class="acc-item" data-acc="proceso-${id}">
-          <button class="acc-head" onclick="toggleAcc(this)"><span>El proceso</span><span class="acc-plus">+</span></button>
-          <div class="acc-body"><div class="acc-body-inner">${o.proceso.map(p=>`<p>${p}</p>`).join('')}</div></div>
-        </div>
-        <div class="acc-item" data-acc="referencia-${id}">
-          <button class="acc-head" onclick="toggleAcc(this)"><span>La referencia</span><span class="acc-plus">+</span></button>
-          <div class="acc-body"><div class="acc-body-inner">${o.referencia_texto.map(p=>`<p>${p}</p>`).join('')}${refLinkHtml}</div></div>
-        </div>
-        ${adquirirObraAcc(id)}
-      </div>
-      <a id="hires-${id}" href="${imgPath(id)}" download target="_blank" class="hires-link" style="display:none;">Pulsa aquí para descargar la imagen en alta resolución ↓</a>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
-
-function renderVinilo(id){ const v = VINILOS[id]; const {prev,next} = seqNeighbors(id); return `
-    <header class="top">
-      <div>
-        <div class="brand" onclick="location.hash=''"><span>Reflejos y</span><span>sombras</span></div>
-        <button class="theme-toggle" onclick="toggleTheme()">Modo</button>
-      </div>
-      <div class="navrow">
-        <button class="navbtn" ${prev?`onclick="location.hash='${prev.id}'"`:'disabled'}>‹</button>
-        <button class="navbtn" ${next?`onclick="location.hash='${next.id}'"`:'disabled'}>›</button>
-      </div>
-    </header>
-    <main>
-      <div class="vinilo-screen">
-        <span class="label">${v.label}</span>
-        ${v.texto.map(p=>`<p>${p}</p>`).join('')}
-      </div>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
-
-function renderFinal(id){ const {prev,next} = seqNeighbors(id); return `
-    ${header()}
-    <main>
-      <div class="portada-revisit" style="border-top:none; padding-top:10px;">
-        <img class="home-portada small" src="${PORTADA_IMG}" data-imgid="portada" data-ext-idx="0" alt="" onerror="handleImgError(this)">
-        <button class="portada-revisit-toggle" onclick="togglePortada()">¿Qué hay debajo de esta imagen?</button>
-        <div class="portada-hidden-text" id="portada-hidden">
-          <div class="inner">
-            <p class="label" style="margin-bottom:14px;">La obra</p>
-            <p style="margin-bottom:20px;">Texto de la portada (resumido).</p>
-            <p class="label" style="margin:30px 0 14px;">El proceso</p>
-            <p>Proceso resumido.</p>
-          </div>
-        </div>
-      </div>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
-
-function toggleAcc(btn){ btn.parentElement.classList.toggle('open') }
-function togglePortada(){ const el = document.getElementById('portada-hidden'); if(el) el.classList.toggle('open') }
-
-function renderBiografia(){ return `
-    ${header()}
-    <main>
-      <span class="label">Biografía</span>
-      <h1 class="titulo" style="font-size:34px; margin-top:14px;">Javier Sanagustín Moreu</h1>
-      <div class="obra-image" style="width:150px; max-width:45%; aspect-ratio:3/4; margin:22px 0 26px;">
-        <span class="placeholder" style="font-size:9px; text-align:center; padding:6px;">img/biografia.[jpg|png]</span>
-      </div>
-      <div class="cuerpo"><p>Biografía (resumida).</p></div>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
-
-function renderEpilogo(){ const {prev,next} = seqNeighbors('epilogo'); return `
-    ${header()}
-    <main>
-      <span class="label">Epílogo</span>
-      <div class="cuerpo" style="margin-top:20px; font-style:italic;">
-        ${EPILOGO.map(p=>`<p>${p}</p>`).join('')}
-        <p style="margin-top:26px; font-size:22px;">${EPILOGO_FINAL}</p>
-      </div>
-      ${catalogBtn()}
-    </main>
-    ${footer()}
-  ` }
-
-function render(){ const route = getRoute(); let html = '';
-if(route.type==='home') html = renderHome();
-else if(route.type==='obra') html = renderObra(route.id);
-else if(route.type==='vinilo') html = renderVinilo(route.id);
-else if(route.type==='final') html = renderFinal(route.id);
-else if(route.type==='biografia') html = renderBiografia();
-else if(route.type==='epilogo') html = renderEpilogo();
-else html = renderHome();
-document.getElementById('app').innerHTML = html;
+function render() {
+  const route = getRoute();
+  const app = document.getElementById('app');
+  if (route.type === 'obra') {
+    app.innerHTML = renderObra(route.id);
+  } else if (route.type === 'vinilo') {
+    app.innerHTML = renderVinilo(route.id);
+  } else if (route.type === 'final') {
+    app.innerHTML = renderFinal(route.id);
+  } else if (route.type === 'biografia') {
+    app.innerHTML = renderBiografia();
+  } else if (route.type === 'epilogo') {
+    app.innerHTML = renderEpilogo();
+  } else if (route.type === 'catalogo') {
+    app.innerHTML = renderCatalogo();
+  } else {
+    app.innerHTML = renderHome();
+  }
+  window.scrollTo(0,0);
 }
 
 window.addEventListener('hashchange', render);
-window.addEventListener('load', ()=>{ initTheme(); render(); });
-
+initTheme();
+render();
 </script>
 </body>
 </html>
-      
