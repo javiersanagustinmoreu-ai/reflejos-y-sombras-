@@ -31,13 +31,17 @@ IMG_EXTS = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 
 def extract_orden(index_text: str) -> list[str]:
     """Extrae la lista ORDEN declarada como: const ORDEN = [ "id1","id2", ... ];"""
+    # Primer intento estricto
     m = re.search(r"const\s+ORDEN\s*=\s*\[([^\]]*)\]", index_text, re.S)
     if not m:
-        return []
+        # Intento más permisivo (por si hay ; al final o saltos variados)
+        m = re.search(r"const\s+ORDEN\s*=\s*\[((?:.|\n)*?)\]\s*;", index_text, re.S)
+        if not m:
+            return []
     inner = m.group(1)
-    # Encuentra todas las cadenas entre comillas dobles
-    items = re.findall(r'"([^\"]+)"', inner)
-    return items
+    # Captura cadenas entre comillas simples o dobles
+    items = re.findall(r"['\"]([^'\"]+)['\"]", inner)
+    return [it.strip() for it in items if it.strip()]
 
 
 def main() -> int:
@@ -54,10 +58,11 @@ def main() -> int:
 
     if not IMG_DIR.exists():
         print(f"Aviso: no existe la carpeta {IMG_DIR}. Ninguna imagen podrá validarse.")
+    else:
+        print(f"Comprobando imágenes en: {IMG_DIR.resolve()}\n")
 
     missing = []
 
-    print('Validando imágenes en img/\n')
     for id_ in expected:
         found_file = None
         for ext in IMG_EXTS:
@@ -68,7 +73,7 @@ def main() -> int:
         if found_file:
             print(f"✓ {id_:20} → {found_file}")
         else:
-            print(f"✗ {id_:20} → MISSING")
+            print(f"✗ {id_:20} → MISSING (esperado: img/{id_}.[{', '.join(IMG_EXTS)}])")
             missing.append(id_)
 
     print('\nResumen:')
