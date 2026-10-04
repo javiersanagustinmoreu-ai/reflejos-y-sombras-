@@ -749,15 +749,16 @@ function footer() {
   </footer>`;
 }
 
-// Cuando el catálogo esté publicado en Amazon, cambia SOLO esta línea
-// por el enlace real (algo como "https://www.amazon.es/dp/XXXXXXXXXX").
-// Mientras tanto el botón queda visible pero no lleva a ningún sitio.
-const CATALOG_URL = null; // ej: "https://www.amazon.es/dp/XXXXXXXXXX"
+// Enlace del catálogo en Amazon. Se activa solo a partir del 8 de octubre de 2026.
+// Para activarlo ya: CATALOG_DESDE = null. Para quitarlo: CATALOG_URL = null.
+const CATALOG_URL = "https://www.amazon.es/dp/8409906201";
+const CATALOG_DESDE = "2026-10-08";
+const CATALOG_ACTIVO = !!CATALOG_URL && (!CATALOG_DESDE || new Date() >= new Date(CATALOG_DESDE + "T00:00:00"));
 
 function catalogBtn() {
-  const url = CATALOG_URL || '#';
-  const disabledAttr = CATALOG_URL ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo todavía no está disponible para comprar.\');"';
-  return `<a class="catalog-btn" href="${url}"${CATALOG_URL ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo
+  const url = CATALOG_ACTIVO ? CATALOG_URL : '#';
+  const disabledAttr = CATALOG_ACTIVO ? '' : ' onclick="event.preventDefault(); alert(\'El catálogo estará disponible para comprar a partir del 8 de octubre.\');"';
+  return `<a class="catalog-btn" href="${url}"${CATALOG_ACTIVO ? ' target="_blank" rel="noopener"' : ''}${disabledAttr}>Adquirir catálogo
     <small>20€</small>
     <small>Comprarlo es apoyar directamente este proyecto.</small>
   </a>`;
