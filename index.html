@@ -819,7 +819,7 @@ function renderHome() {
 // PRECIOS DE VENTA — confirmados por Vivo el 16 de agosto de 2026.
 // "No caigas" está cedida a la exposición: sin precio, no disponible.
 const PRECIOS_OBRA = {
-  "antes-de-encontrar": { precio: "1.400 €", disponible: true },
+  "antes-de-encontrar": { precio: null, disponible: false, retirada: true },
   "luz-retenida": { precio: "1.600 €", disponible: true },
   "hacia-arriba": { precio: null, disponible: false, vendida: true },
   "cerro-encendido": { precio: "1.000 €", disponible: true },
@@ -840,7 +840,7 @@ function adquirirObraAcc(id) {
   let bodyHtml;
   if (!info || info.precio == null) {
     bodyHtml = `
-      <p style="color:var(--fg-faint); font-style:italic;">${info && info.vendida ? 'Obra vendida.' : 'Cedida a la exposición. No disponible para la venta.'}</p>`;
+      <p style="color:var(--fg-faint); font-style:italic;">${info && info.vendida ? 'Obra vendida.' : (info && info.retirada ? 'No disponible para la venta.' : 'Cedida a la exposición. No disponible para la venta.')}</p>`;
   } else if (info.disponible) {
     bodyHtml = `
       <p style="font-family:'DM Sans',sans-serif; font-size:18px; letter-spacing:.02em; margin-bottom:14px;">${info.precio}</p>
